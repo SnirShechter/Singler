@@ -22,8 +22,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .navbar {
+  height: 50px;
   display: flex;
   justify-content: space-between;
   background-color: gainsboro;
@@ -31,7 +32,9 @@ export default {
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
   img {
-    width: 5em;
+    max-width: 5em;
+    height: 90%;
+    margin:5px;
   }
 }
 </style>
