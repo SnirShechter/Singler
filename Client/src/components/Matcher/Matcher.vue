@@ -1,7 +1,7 @@
 <template>
-  <div class="matcher">
+  <section class="matcher">
     MATCHER
-  </div>
+  </section>
 </template>
 
 <script>

@@ -1,9 +1,9 @@
 <template>
-  <div class="matches">
+  <section class="matches">
     <ul>
       <chat-preview :key="match.id" v-for="match in matches"></chat-preview>
     </ul>
-  </div>
+  </section>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <section class="navbar">
     <router-link to="/myprofile">
       <img src="../../assets/profile.png"></img>
     </router-link>
@@ -9,7 +9,7 @@
     <router-link to="/matches">
       <img src="../../assets/chat.png"></img>
     </router-link>
-  </div>
+  </section>
 </template>
 
 <script>
