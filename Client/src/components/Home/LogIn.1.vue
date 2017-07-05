@@ -1,16 +1,13 @@
 <template>
     <section class="log-in">
         </el-alert>
-        <h1>
-            <span class="theme"> Singler </span>
-        </h1>
+        <h1> Singler</h1>
         <el-input class="sign-in" type="text" placeholder="Username" v-model="username"></el-input>
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
         <el-button class="sign-in" type="primary">Log in</el-button>
         <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
-        <p>you don`t have acount yet?
-            <router-link to="/register"> register now! </router-link>
-        </p>
+        <el-button class="sign-in" type="primary">Success</el-button>
+        
     </section>
 </template>
 
@@ -35,11 +32,6 @@ export default {
     justify-content: space-around;
 }
 
-h1 {
-    // color: var(--theme-color);
-    font-size: 2em;
-}
-
 .facebook {
     background-color: #3b5998;
     color: white;
@@ -50,14 +42,10 @@ h1 {
 }
 
 
-.sign-in {
-    //  background-color: #f4424b;
-    margin: 2em 0 0 0 !important;
-    width: 100%;
-}
-
-router-link {
-    color: var(--theme-color);
+.sign-in{
+   //  background-color: #f4424b;
+     margin: 2em 0 0 0 !important;
+     width: 100%;
 }
 
 </style>
