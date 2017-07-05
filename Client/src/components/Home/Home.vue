@@ -1,7 +1,7 @@
 <template>
   <section class="home">
-   <h1> home </h1>
     <login></login>
+    <log-in></log-in>
   </section>
 </template>
 
