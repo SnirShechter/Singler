@@ -1,6 +1,8 @@
 const profile = {
-    name: 'snit',                                   // name: 'Snir Shechter'
+    fName: 'fName',                                   // name: 'Snir Shechter'
+    lName: 'lName',                                   // name: 'Snir Shechter'
     birthdate: '2305823058',                        // birthdate: '23235232352' - IN MILISECONDS
+    imgUrl: 'http://nowhere.com/img.png',                        // birthdate: '23235232352' - IN MILISECONDS
     isMale: true,                                   // isMale: true
     position: { lat: '23509.2', lng: '340943.2' },       // position:{lat:3395.22,lng:2341.65}
     interests: ['Gaming', 'Web Surfing', 'Movies'],    // interests: ['Soccer','Gaming','Shopping','Movies']
@@ -9,7 +11,7 @@ const profile = {
 
 const user = {
     _id: '1',           // u953020h
-    username: 'snit',   // username: 'snirshechter'   - LOWERCASE STRING
+    uname: 'snit',   // username: 'snirshechter'   - LOWERCASE STRING
     password: '1234',   // password: 'mypass125'
     profile: profile,
     likes: {
