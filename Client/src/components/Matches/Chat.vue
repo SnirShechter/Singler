@@ -5,7 +5,7 @@
 
 <script>
 export default {
-  name: 'register',
+  name: 'chat-preview',
   data() {
     return {
     }
