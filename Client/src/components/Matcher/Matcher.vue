@@ -1,11 +1,12 @@
 <template>
-  <div class="register">
+  <div class="matcher">
+    MATCHER
   </div>
 </template>
 
 <script>
 export default {
-  name: 'register',
+  name: 'Matcher',
   data() {
     return {
     }
