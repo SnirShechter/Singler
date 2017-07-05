@@ -25,18 +25,14 @@ footer{
   text-align: center;
 }
 
-a {
-  color: --theme-color;
-  text-decoration: none;
-  display: inline-block;
-}
-.theme {
-  color: var(--theme-color);
-  font-family: var(--secondary-font);
-}
-
 ul,
 fieldset {
   padding: 0;
   margin: 0;
+}
+
+a {
+  color: --theme-color;
+  text-decoration: none;
+  display: inline-block;
 }

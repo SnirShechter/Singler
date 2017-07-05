@@ -8,3 +8,13 @@
   display: block;
   width: 100%;
 }
+
+.theme {
+  color: var(--theme-color);
+  font-family: var(--secondary-font);
+}
+
+.big-txt{
+  font-size: 2em;
+  font-weight: bold;
+}
