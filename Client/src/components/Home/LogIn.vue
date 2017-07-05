@@ -11,18 +11,18 @@
 
 <script>
 export default {
-    name: 'log-in',
-    data() {
+  name: 'log-in',
+  data() {
         return {
-            username='',
-            password=''
+            username: '',
+            password: ''
         }
     }
 }
 </script>
 
 <style lang="scss">
-.log-in {  
+.log-in {
     display: flex;
     flex-flow: column wrap;
 }
