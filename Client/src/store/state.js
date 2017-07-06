@@ -17,10 +17,6 @@ const user = {
         '4': true, // ug39h4j: true
         '5': false // u9gh39h: false
     },
-    userMatches: {
-        'matchId': 'userId', // 'm3o4hh9':'ug204jhg'
-        'matchId': 'userId'  // 'm3o4hh9':'ug204jhg'
-    },
     filtermap: {
         female: true, // female: true
         male: false,   // female: true
@@ -30,8 +26,10 @@ const user = {
 }
 
 const matches = {
-    '1': {
+    '124124': {
+        _Id: '124124',
         date: '34634689346', // date: '1015681025' - IN MILISECONDS
+        targetId: '123123',
         matchedProfile: {
             fName: 'match1',                                   // name: 'Snir Shechter'
             lName: 'match1',                                   // name: 'Snir Shechter'
@@ -42,10 +40,14 @@ const matches = {
             interests: ['Gaming', 'Web Surfing', 'Movies'],    // interests: ['Soccer','Gaming','Shopping','Movies']
             desc: 'I like girls'                            // desc: 'I love hiking, dancing, shopping, prefer girls with brown hair'
         },
-        msgs: [{ date: '325235', txt: '1' }, { date: '322355235', txt: '2' }, { date: '32522135', txt: '3' }]
+        msgs: [{ date: '325235', txt: '1' },
+        { date: '322355235', txt: '2' },
+        { date: '32522135', txt: '3' }]
     },
-    '2': {
+    '124124': {
+        _Id: '124124',
         date: '56756856865', // date: '1015681025' - IN MILISECONDS
+        targetId: '123123',
         matchedProfile: {
             fName: 'match2',                                   // name: 'Snir Shechter'
             lName: 'match2',                                   // name: 'Snir Shechter'
@@ -55,7 +57,7 @@ const matches = {
             position: { lat: '23509.2', lng: '340943.2' },       // position:{lat:3395.22,lng:2341.65}
             interests: ['Gaming', 'Web Surfing', 'Movies'],    // interests: ['Soccer','Gaming','Shopping','Movies']
             desc: 'I like girls'                            // desc: 'I love hiking, dancing, shopping, prefer girls with brown hair'
-        },,
+        },
         msgs: [{ date: '325235', txt: '1' }, { date: '325235', txt: '2' }, { date: '325235', txt: '3' }]
     },
 }
@@ -66,8 +68,12 @@ const usersToShow = {
     '8': genUser(user, 8),
     '9': genUser(user, 9),
     '10': genUser(user, 10),
-    '11': genUser(user, 11),
+    '11': genUser(user, 11)
 }
+
+
+
+
 const state = {
     user,
     matches,
