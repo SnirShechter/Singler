@@ -1,6 +1,6 @@
 const profile = {
-    fName: 'fName',                                   // name: 'Snir Shechter'
-    lName: 'lName',                                   // name: 'Snir Shechter'
+    fName: 'myFName',                                   // name: 'Snir Shechter'
+    lName: 'myLName',                                   // name: 'Snir Shechter'
     birthdate: '2305823058',                        // birthdate: '23235232352' - IN MILISECONDS
     imgUrl: 'http://nowhere.com/img.png',                        // birthdate: '23235232352' - IN MILISECONDS
     isMale: true,                                   // isMale: true
