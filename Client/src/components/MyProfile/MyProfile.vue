@@ -1,7 +1,7 @@
 <template>
   <section class="myProfile">
     <h1>
-      <span class="theme">Snir Shechter</span>
+      <span class="theme">{{this.$store.state.user.profile.fName}}</span>
     </h1>
     <img src="../../assets/profile.png"></img>
     <div class="details">
