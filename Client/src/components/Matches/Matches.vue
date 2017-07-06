@@ -3,6 +3,12 @@
     <ul>
       <!--<chat-preview :key="match.id" v-for="match in matches"></chat-preview>-->
       <chat-preview></chat-preview>
+      <chat-preview></chat-preview>
+      <chat-preview></chat-preview>
+      <chat-preview></chat-preview>
+      <chat-preview></chat-preview>
+      <chat-preview></chat-preview>
+      
     </ul>
   </section>
 </template>

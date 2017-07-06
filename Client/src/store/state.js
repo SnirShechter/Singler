@@ -25,10 +25,10 @@ const user = {
     }
 }
 
-const matches = {
-    '124124': {
+const matches = [
+    {
         _Id: '124124',
-        date: '34634689346', // date: '1015681025' - IN MILISECONDS
+        date: '750373200000', // date: '1015681025' - IN MILISECONDS
         targetId: '123123',
         matchedProfile: {
             fName: 'match1',                                   // name: 'Snir Shechter'
@@ -44,9 +44,9 @@ const matches = {
         { date: '322355235', txt: '2' },
         { date: '32522135', txt: '3' }]
     },
-    '124124': {
+    {
         _Id: '124124',
-        date: '56756856865', // date: '1015681025' - IN MILISECONDS
+        date: '750383200000', // date: '1015681025' - IN MILISECONDS
         targetId: '123123',
         matchedProfile: {
             fName: 'match2',                                   // name: 'Snir Shechter'
@@ -60,7 +60,7 @@ const matches = {
         },
         msgs: [{ date: '325235', txt: '1' }, { date: '325235', txt: '2' }, { date: '325235', txt: '3' }]
     },
-}
+]
 
 const usersToShow = {
     '6': genUser(user, 6),
