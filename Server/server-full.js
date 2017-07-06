@@ -1,7 +1,7 @@
 // Minimal Simple REST API Handler (With MongoDB and Socket.io)
 // Plus support for simple login and session
 // Plus support for file upload
-// Author: Yaron Biton misterBIT.co.il
+// Author: Yaron Biton misterBIT.co.il (TalyS updates)
 
 "use strict";
 
@@ -47,7 +47,8 @@ function dbConnect() {
 
 	return new Promise((resolve, reject) => {
 		// Connection URL
-		var url = 'mongodb://localhost:27017/singlerdb';
+		// var url = 'mongodb://localhost:27017/singlerdb';
+		var url = 'mongodb://singler1:singler1@ds119568.mlab.com:19568/singlerdb';
 		// Use connect method to connect to the Server
 		mongodb.MongoClient.connect(url, function (err, db) {
 			if (err) {
@@ -118,30 +119,58 @@ app.get('/data/stam/matches/:id', function (req, res) {
 	const objId = req.params.id;
 	cl(`Getting you the matches for user id: ${objId}`);
 	// cl('aaajbiuasbsiuafiuafuifaffff... Taly....');
-	// dbConnect()
-	// 	.then((db) => {
-	// 		const collection = db.collection('users');
-	// 		let _id;
-	// 		try {
-	// 			_id = new mongodb.ObjectID(objId);
-	// 		}
-	// 		catch (e) {
-	// 			return Promise.reject(e);
-	// 		}
-	// 		return collection.findOne({ _id: _id },{obj: matches})
-	// 			.then((obj) => {
-	// 				cl("Returning the matches for " + objId);
-	// 				res.json(obj);
-	// 				db.close();	
-	// 			})
-	// 			.catch(err => {
-	// 				cl('Cannot get you that ', err)
-	// 				res.json(404, { error: 'not found' })
-	// 				db.close();	
-	// 			})
+	dbConnect()
+		.then((db) => {
+			const collection = db.collection('users');
+			let _id;
+			try {
+				_id = new mongodb.ObjectID(objId);
+			}
+			catch (e) {
+				return Promise.reject(e);
+			}
+			return collection.findOne({ _id: _id })
+				.then((obj) => {
+					cl("Returning the matches for " + objId);
+					res.json(obj.matches);
+					db.close();	
+				})
+				.catch(err => {
+					cl('Cannot get you that ', err)
+					// res.json(404, { error: 'not found' })
+					res.status(404).json({ error: 'not found' });
+					db.close();	
+				})
 
-	// 	});
+		});
 });
+
+// PUT - update like for user
+app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
+	// const objType 	= req.params.objType;
+	const objId 	= req.params.id;
+	const targetId 	= req.params.trgId;
+	const isLike 	=  req.params.like;
+	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
+
+	cl(`Requested to update the likes of id: ${objId}`);
+
+	dbConnect().then((db) => {
+		const collection = db.collection('users');
+		collection.updateOne({ _id: objId }, {$set: { "likes": {[targetId]: isLike} }},
+			(err, result) => {
+				if (err) {
+					cl('Cannot Update', err)
+					res.json(500, { error: 'Update failed' })
+				} else {
+					// res.json(newObj);
+					cl('update likes: ', newObj);
+				}
+				db.close();
+			});
+	});
+});
+
 
 // DELETE
 // app.delete('/data/:objType/:id', function (req, res) {
