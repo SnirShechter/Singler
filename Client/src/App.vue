@@ -18,5 +18,8 @@ export default {
 </script>
 
 <style lang="scss">
+footer{
+margin-top: 10px;
+}
 @import './scss/style';
 </style>
