@@ -47,7 +47,8 @@ function dbConnect() {
 
 	return new Promise((resolve, reject) => {
 		// Connection URL
-		var url = 'mongodb://localhost:27017/singlerdb';
+		// var url = 'mongodb://localhost:27017/singlerdb';
+		var url = 'mongodb://singler1:singler1@ds119568.mlab.com:19568/singlerdb';
 		// Use connect method to connect to the Server
 		mongodb.MongoClient.connect(url, function (err, db) {
 			if (err) {
@@ -145,29 +146,29 @@ app.get('/data/stam/matches/:id', function (req, res) {
 });
 
 // PUT - update like for user
-app.put('/data/:objType/:id', function (req, res) {
+app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	// const objType 	= req.params.objType;
 	const objId 	= req.params.id;
-	const targetId 	= req.params.targetId;
-	const isLike 	=  req.params.isLike;
+	const targetId 	= req.params.trgId;
+	const isLike 	=  req.params.like;
 	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
 
 	cl(`Requested to update the likes of id: ${objId}`);
 
-	// dbConnect().then((db) => {
-	// 	const collection = db.collection('users');
-	// 	collection.updateOne({ _id: objId }, {$set: { "likes": {targetId: isLike} }},
-	// 		(err, result) => {
-	// 			if (err) {
-	// 				cl('Cannot Update', err)
-	// 				res.json(500, { error: 'Update failed' })
-	// 			} else {
-	// 				res.json(newObj);
-	// 				cl('update likes: ', newObj);
-	// 			}
-	// 			db.close();
-	// 		});
-	// });
+	dbConnect().then((db) => {
+		const collection = db.collection('users');
+		collection.updateOne({ _id: objId }, {$set: { "likes": {[targetId]: isLike} }},
+			(err, result) => {
+				if (err) {
+					cl('Cannot Update', err)
+					res.json(500, { error: 'Update failed' })
+				} else {
+					// res.json(newObj);
+					cl('update likes: ', newObj);
+				}
+				db.close();
+			});
+	});
 });
 
 
