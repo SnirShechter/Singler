@@ -28,7 +28,7 @@ const user = {
 const matches = [
     {
         _Id: '124124',
-        date: '34634689346', // date: '1015681025' - IN MILISECONDS
+        date: '750373200000', // date: '1015681025' - IN MILISECONDS
         targetId: '123123',
         matchedProfile: {
             fName: 'match1',                                   // name: 'Snir Shechter'
@@ -46,7 +46,7 @@ const matches = [
     },
     {
         _Id: '124124',
-        date: '56756856865', // date: '1015681025' - IN MILISECONDS
+        date: '750383200000', // date: '1015681025' - IN MILISECONDS
         targetId: '123123',
         matchedProfile: {
             fName: 'match2',                                   // name: 'Snir Shechter'

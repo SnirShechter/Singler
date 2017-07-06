@@ -31,6 +31,7 @@ export default {
   box-shadow: -1px 10px 20px -3px rgba(0, 0, 0, 0.75);
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
+  margin-bottom: 1em;
   img {
     max-width: 5em;
     height: 90%;

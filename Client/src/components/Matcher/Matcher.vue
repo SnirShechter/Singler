@@ -2,7 +2,7 @@
   <section class="matcher">
     <img src="../../assets/userImgs/UzaE0Uk.jpg" v-if="nextUser"></img>
     <p class="details">
-      <span class="big-txt theme" v-if="nextUser">{{this.nextUser.profile.fName}}</span>
+      <span class="big-txt" v-if="nextUser">{{this.nextUser.profile.fName}}</span>
       <span class="age" v-if="nextUser">{{this.$store.getters.nextUserAge}}</span>
     </p>
     <div class="btns">
@@ -60,7 +60,7 @@ img {
   width:100%;
   margin-top: 20px;
   max-width: 500px;
-  // max-height: 100vh
+  max-height: 100vh;
 }
 
 .details {
