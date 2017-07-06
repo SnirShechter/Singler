@@ -42,10 +42,10 @@ export default {
       });
     },
     commitChange() {
-      // var like = {'522': true};
-      this.$store.commit('like', { '522': true })
+      var like = {'522': true};
+      this.$store.commit('like', like)
     }
-  }
+  } 
 }
 </script>
 
