@@ -1,10 +1,12 @@
 <template>
   <section class="matcher">
+    <div class="img-container">
     <img src="../../assets/userImgs/UzaE0Uk.jpg" v-if="nextUser"></img>
     <p class="details">
       <span class="big-txt" v-if="nextUser">{{this.nextUser.profile.fName}}</span>
       <span class="age" v-if="nextUser">{{this.$store.getters.nextUserAge}}</span>
     </p>
+    </div>
     <div class="btns">
       <button @click="changeProfile(false)" class="unlike">X</button>
       <button @click="changeProfile(true)" class="like">V</button>
@@ -34,6 +36,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.img-container{
+  border:1px solid black;
+  box-shadow: 2px 5px 26px 7px rgba(0,0,0,0.75);
+}
 .btns{
   position: fixed;
     bottom: 25px;
@@ -57,13 +63,13 @@ button {
 }
 
 img {
-  width:100%;
   margin-top: 20px;
   max-width: 500px;
-  max-height: 100vh;
+  max-height: 70vh;
 }
 
 .details {
+  color:white;
   text-align: left;
   line-height: 56px;
   margin: 0;
