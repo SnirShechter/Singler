@@ -11,6 +11,7 @@ export default {
     },
     like(state, {targetId,isLiked}) {
         state.user.likes[targetId] = {targetId:isLiked};
+        state.usersToShow.splice(0,1);
     },
     match(state, match) { 
         state.matches[match._id] = match;

@@ -1,7 +1,6 @@
 <template>
   <section class="home">
     <login></login>
-    <log-in></log-in>
   </section>
 </template>
 

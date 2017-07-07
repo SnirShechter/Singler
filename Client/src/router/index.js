@@ -10,6 +10,7 @@ import 'element-ui/lib/theme-default/index.css'
 import locale from 'element-ui/lib/locale/lang/en'
 
 
+
 Vue.use(Element)
 // Vue.use(ElementUI, { locale })
 Vue.use(Router)
