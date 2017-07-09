@@ -94,7 +94,7 @@
 // import chatPreview from './ChatPreview'
 import moment from 'moment'
 export default {
-  name: 'chat',
+  name: 'Chat',
    props: ['matchId'],
   data() {
     return {

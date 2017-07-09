@@ -9,7 +9,7 @@
 
 <script>
 import chatPreview from './ChatPreview'
-import chat from './chat'
+import chat from './Chat'
 export default {
   name: 'Matches',
   data() {
