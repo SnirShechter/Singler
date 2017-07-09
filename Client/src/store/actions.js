@@ -3,7 +3,7 @@ import axios from 'axios';
 // snir : ITS NOT WORKING, JUST A SKETCH
 export default {
   register(context, user) {
-    axios.post('/users', user)
+    axios.post('http://localhost:3003/data/users', user)
       .then((res) => {
         console.log(res.data);
         context.commit('Login', res.data)

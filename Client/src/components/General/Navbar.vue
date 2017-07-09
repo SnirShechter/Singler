@@ -24,6 +24,8 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
+  position: static;
+  z-index: 10;
   height: 50px;
   display: flex;
   justify-content: space-between;

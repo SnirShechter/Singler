@@ -1,4 +1,4 @@
-
+import singlerService from '../services/singler.service'
 // snir : ITS NOT WORKING, JUST A SKETCH
 export default {
     Login(state, data) {
@@ -9,18 +9,20 @@ export default {
     editProfile(state, profile) {
         state.user.profile = profile;
     },
-    like(state, {targetId,isLiked}) {
-        state.user.likes[targetId] = {targetId:isLiked};
-        state.usersToShow.splice(0,1);
+    like(state, { targetId, isLiked }) {
+        state.user.likes[targetId] = { targetId: isLiked };
+        state.usersToShow.splice(0, 1);
     },
-    match(state, match) { 
+    match(state, match) {
         state.matches[match._id] = match;
     },
     unmatch(state, matchId) {
         delete state.matches[matchId];
     },
     addMsg(state, { matchId, msg }) {
-        state.matches[matchId].msgs.push(msg);
+        // console.log(matchId, msg)
+        const currMatch = singlerService.findMatchById(state.matches, matchId)
+        currMatch.msgs.push(msg);
     }
 }
 
