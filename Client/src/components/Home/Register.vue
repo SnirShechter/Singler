@@ -3,10 +3,10 @@
     <h1>
       <span class="theme"> user details </span>
     </h1>
-    <el-input class="input-model" placeholder="Username" type="text" v-model="user.uName"> </el-input>
-    <el-input class="input-model" placeholder="Password" type="password" v-model="user.password"> </el-input>
+    <el-input class="input-model" placeholder="Username" type="text" v-model="prefs.uName"> </el-input>
+    <el-input class="input-model" placeholder="Password" type="password" v-model="prefs.password"> </el-input>
     <el-input class="input-model" placeholder="Repeat password" v-model="prefs.repeatPassword" type="password"> </el-input>
-    <span class="error" v-if="prefs.repeatPassword !== user.password">Passwords don't match!</span>
+    <span class="error" v-if="prefs.repeatPassword !== prefs.password">Passwords don't match!</span>
     <h1>
       <span class="theme"> profile </span>
     </h1>
@@ -51,6 +51,7 @@
       </el-radio-group>
     </div>
     <el-button type="primary" @click="submit">Submit</el-button>
+    <el-button type="primary" @click="cl">Console</el-button>
   </section>
 </template>
 
@@ -65,6 +66,8 @@ export default {
       prefs: {
         genderPref: 3,
         repeatPassword: '',
+        uName: '',
+        password: ''
       },
       profile: {
         fName: '',                                   // name: 'Snir Shechter'
@@ -73,10 +76,6 @@ export default {
         isMale: true,
         interests: '',    // interests: ['Soccer','Gaming','Shopping','Movies']
         desc: ''                            // desc: 'I love hiking, dancing, shopping, prefer girls with brown hair'
-      },
-      user: {           // u953020h
-        uName: '',   // username: 'snirshechter'   - LOWERCASE STRING
-        password: ''
       },
       filtermap: {
         female: false,
@@ -98,10 +97,13 @@ export default {
     }
   },
   methods: {
+    cl() {
+      console.log(this.$store.state);
+    },
     submit() {
       var user = {
-        uName: this.user.uName,
-        password: this.user.password,
+        uName: this.prefs.uName,
+        password: this.prefs.password,
         profile: {
           fName: this.profile.fName,
           lName: this.profile.lName,
@@ -127,13 +129,6 @@ export default {
           title: 'Error',
           message: 'Passwords do not match!'
         })
-    },
-    register(user) {
-      console.log(this.$store.state.user) // <----------- CONSOLE.LOG
-      this.$store.dispatch('register', user)
-    },
-    handlePreview(file) {
-      console.log(file);
     }
   }
 }

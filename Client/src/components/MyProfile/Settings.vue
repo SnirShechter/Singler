@@ -1,11 +1,11 @@
 <template>
-  <section class="register">
+  <section class="settings">
   </section>
 </template>
 
 <script>
 export default {
-  name: 'register',
+  name: 'settings',
   data() {
     return {
     }

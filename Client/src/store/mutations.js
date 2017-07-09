@@ -1,16 +1,23 @@
 import singlerService from '../services/singler.service'
 // snir : ITS NOT WORKING, JUST A SKETCH
 export default {
-    Login(state, data) {
-        state.user = data.user;
+    login(state, data) {
+        console.log(data);
+        state._id = data._id;
+        state.uName = data.uName;
+        state.profile = data.profile;
+        state.likes = data.likes;
         state.matches = data.matches;
-        state.usersToShow = data.users;
+        state.filtermap = data.filtermap;
+    },
+    addUsers(state,users) {
+        state.usersToShow.push.apply(this,users);
     },
     editProfile(state, profile) {
-        state.user.profile = profile;
+        state.profile = profile;
     },
     like(state, { targetId, isLiked }) {
-        state.user.likes[targetId] = { targetId: isLiked };
+        state.likes[targetId] = { targetId: isLiked };
         state.usersToShow.splice(0, 1);
     },
     match(state, match) {
