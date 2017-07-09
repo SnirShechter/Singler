@@ -2,14 +2,14 @@
     <section class="matches">
         <li>
             <img class="profile" :src="match.matchedProfile.imgUrl">
-            
+    
             <div class="msg-details">
                 <p>
                     <span class="theme">{{match.matchedProfile.fName }} {{match.matchedProfile.lName }} </span>
                     {{timestamp}}
                 </p>
                 <p>
-                    {{match.msgs[0].txt}}
+                    {{match.msgs[lastMessage].txt}}
                 </p>
             </div>
         </li>
@@ -24,6 +24,7 @@ export default {
     props: ['match'],
     data() {
         return {
+            lastMessage: this.match.msgs.length - 1
         }
     },
     computed: {
@@ -40,8 +41,8 @@ li {
     display: flex; // flex-flow: row nowrap;
     align-items: center;
     justify-content: left;
-
     margin: 0.5em;
+    cursor: pointer;
 }
 
 p {

@@ -1,3 +1,5 @@
+import singlerService from '../services/singler.service'
+
 // snir : ITS NOT WORKING, JUST A SKETCH
 export default {
     myAge(state, getters) {
@@ -15,6 +17,11 @@ export default {
     },
     getMatches(state, getters) {
         return state.matches;
+    },
+    getMatch(state, getters) {
+        // console.log('HEYYYY');
+        // return state.matches[0];
+        return matchId => singlerService.findMatchById(state.matches, matchId)
+
     }
-    
 }
