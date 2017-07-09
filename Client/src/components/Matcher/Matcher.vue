@@ -3,13 +3,13 @@
     <div class="img-container">
       <img src="../../assets/userImgs/sample.jpg" v-if="nextUser"></img>
       <p class="details">
-        <span class="big-txt" v-if="nextUser">{{this.nextUser.profile.fName}}</span>
+        <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
         <span class="age" v-if="nextUser">{{this.$store.getters.nextUserAge}}</span>
       </p>
-    <div class="btns">
-      <button @click="changeProfile(false)" class="unlike">X</button>
-      <button @click="changeProfile(true)" class="like">V</button>
-    </div>
+      <div class="btns">
+        <button @click="changeProfile(false)" class="unlike">X</button>
+        <button @click="changeProfile(true)" class="like">V</button>
+      </div>
     </div>
   </section>
 </template>
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     changeProfile(isLiked) {
-      console.log(this.nextUser);
+      // console.log(this.nextUser);
       this.$store.commit('like', { targetId: this.nextUser._id, isLiked })
     }
   }
@@ -37,7 +37,7 @@ export default {
 
 <style lang="scss" scoped>
 .img-container {
-  width:100%;
+  width: 100%;
 }
 
 .btns {
@@ -46,9 +46,9 @@ export default {
   left: 50%;
   transform: translate(-50%);
   text-align: center;
-  display:flex;
+  display: flex;
   flex-direction: row;
-  height:50px;
+  height: 50px;
 }
 
 button {

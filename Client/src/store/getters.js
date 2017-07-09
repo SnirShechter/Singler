@@ -9,7 +9,7 @@ export default {
         return state.usersToShow[0];
     },
     nextUserAge(state, getters) {
-        var ageInMilliseconds = (Date.now() - getters.nextUser.profile.birthdate);
+        var ageInMilliseconds = (Date.now() - getters.nextUser.birthdate);
         var age = ageInMilliseconds / (1000 * 60 * 60 * 24 * 365);
         return age.toFixed(1);
     },

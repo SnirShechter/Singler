@@ -3,31 +3,34 @@
     <h1>
       <span class="theme"> user details </span>
     </h1>
-    <el-input class="input-model" placeholder="Username" type="text" v-model="userName"> </el-input>
-    <el-input class="input-model" placeholder="Password" type="password"> </el-input>
-    <el-input class="input-model" placeholder="Repeat password" type="password"> </el-input>
+    <el-input class="input-model" placeholder="Username" type="text" v-model="user.uName"> </el-input>
+    <el-input class="input-model" placeholder="Password" type="password" v-model="user.password"> </el-input>
+    <el-input class="input-model" placeholder="Repeat password" v-model="prefs.repeatPassword" type="password"> </el-input>
+    <span class="error" v-if="prefs.repeatPassword !== user.password">Passwords don't match!</span>
     <h1>
       <span class="theme"> profile </span>
     </h1>
     <div>
-      <el-input class="input-model nameInput" placeholder="First name" type="text" v-model="Pname"> </el-input>
-      <el-input class="input-model nameInput" placeholder="Last name" type="text" v-model="lName"> </el-input>
+      <el-input class="input-model nameInput" placeholder="First name" type="text" v-model="profile.fName"> </el-input>
+      <el-input class="input-model nameInput" placeholder="Last name" type="text" v-model="profile.lName"> </el-input>
     </div>
-    <el-date-picker v-model="birth" type="date" class="date-picker input-model" placeholder="Birthday">
+    <el-date-picker v-model="profile.birthdate" type="date" class="date-picker input-model" placeholder="Birthday">
     </el-date-picker>
-    <el-input class="input-model" placeholder="Interests"> </el-input>
+    <el-input class="input-model" v-model="profile.interests" placeholder="Interests"> </el-input>
   
-    <el-input class="input-model" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="Description" v-model="desc">
+    <el-input class="input-model" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="Description" v-model="profile.desc">
     </el-input>
     <br>
     <div>
       <span class="theme">gender</span>
-      <el-radio class="radio" v-model="gender" label="1">male</el-radio>
-      <el-radio class="radio" v-model="gender" label="2">female</el-radio>
+      <el-radio-group v-model="profile.isMale">
+        <el-radio class="radio" :label="true">male</el-radio>
+        <el-radio class="radio" :label="false">female</el-radio>
+      </el-radio-group>
     </div>
-    <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList2" list-type="picture">
-      <el-button size="small" type="primary">Click to upload</el-button>
-      <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+    <!--<el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList2" list-type="picture">-->
+    <el-button size="small" type="primary">Click to upload</el-button>
+    <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
     </el-upload>
   
     <h1 span class="theme">match preferance</span>
@@ -35,17 +38,19 @@
   
     <div class="block">
       <span class="theme">matching age:</span>
-      <el-slider v-model="value9" class="ages" range show-stops :min="18" :max="120">
+      <el-slider v-model="filtermap.ageRange" class="ages" range show-stops :min="18" :max="120">
       </el-slider>
     </div>
   
     <div>
       <span class="theme">matching gender:</span>
-      <el-radio class="radio" v-model="genferPref" label="1">male</el-radio>
-      <el-radio class="radio" v-model="genferPref" label="2">female</el-radio>
-      <el-radio class="radio" v-model="genferPref" label="3">both</el-radio>
+      <el-radio-group v-model="prefs.genderPref">
+        <el-radio class="radio" :label="1">male</el-radio>
+        <el-radio class="radio" :label="2">female</el-radio>
+        <el-radio class="radio" :label="3">both</el-radio>
+      </el-radio-group>
     </div>
-  
+    <el-button type="primary" @click="submit">Submit</el-button>
   </section>
 </template>
 
@@ -54,21 +59,73 @@ export default {
   name: 'register',
   data() {
     return {
-      Pname:'',
-      lname: '',
-      userName: '',
-      gender: null,
-      genferPref: null,
-      birth: null,
-      value2: '',
-      fileList2: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
-      value9: [20, 50],
-      desc: null
+      prefs: {
+        genderPref: 3,
+        repeatPassword: '',
+      },
+      profile: {
+        fName: '',                                   // name: 'Snir Shechter'
+        lName: '',                                   // name: 'Snir Shechter'
+        birthdate: 0,
+        isMale: true,
+        interests: '',    // interests: ['Soccer','Gaming','Shopping','Movies']
+        desc: ''                            // desc: 'I love hiking, dancing, shopping, prefer girls with brown hair'
+      },
+      user: {           // u953020h
+        uName: '',   // username: 'snirshechter'   - LOWERCASE STRING
+        password: ''
+      },
+      filtermap: {
+        female: false,
+        male: false,
+        ageRange: [18, 120]
+      }
+    }
+  },
+  computed: {
+    femalePref() {
+      if (this.prefs.genderPref == 1)
+        return false;
+      return true;
+    },
+    malePref() {
+      if (this.prefs.genderPref == 2)
+        return false;
+      return true;
     }
   },
   methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    submit() {
+      var user = {
+        uName: this.user.uName,
+        password: this.user.password,
+        profile: {
+          fName: this.profile.fName,
+          lName: this.profile.lName,
+          birthdate: this.profile.birthdate,
+          isMale: this.profile.isMale,
+          interests: this.profile.interests,
+          desc: this.profile.desc
+        },
+        filtermap: {
+          female: this.femalePref,
+          male: this.malePref,
+          minAge: this.filtermap.ageRange[0],
+          maxAge: this.filtermap.ageRange[1]
+        }
+      }
+      console.log(user); // <----------- CONSOLE.LOG
+      if (this.prefs.repeatPassword === user.password)
+        this.register(user)
+      else
+        this.$notify.error({
+          title: 'Error',
+          message: 'Passwords do not match!'
+        })
+    },
+    register(user) {
+      console.log(this.$store.state.user) // <----------- CONSOLE.LOG
+      this.$store.dispatch('register', user)
     },
     handlePreview(file) {
       console.log(file);
@@ -96,6 +153,14 @@ p {
   margin-left: 1em;
 }
 
+.error {
+  color: white;
+  background-color: red;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 20px;
+}
+
 .register {
   display: flex;
   flex-flow: column wrap;
@@ -103,7 +168,7 @@ p {
   justify-content: space-around;
 }
 
-.nameInput{
+.nameInput {
   width: 49%;
 }
 
