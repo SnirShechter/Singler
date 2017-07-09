@@ -95,7 +95,7 @@
 import moment from 'moment'
 export default {
   name: 'chat',
-  props: ['matchId'],
+   props: ['matchId'],
   data() {
     return {
       msgs: [],
@@ -105,15 +105,17 @@ export default {
       infoBar: null,
       match: null,
       timeStamp: null,
-      timePresent: null
+      timePresent: null,
+      // matchId: null
     }
   },
   created() {
+    // this.matchId = this.$route.params.id;
     this.nickName = 'inbar';
     this.newMsg = this.createEmptyMsg();
     // console.log('chat id',this.matchId)
     this.match = this.$store.getters.getMatch(this.matchId)
-    // console.log('bla bla',this.match);
+     console.log('bla bla',this.data);
     // this.msgs = 
     // [{ at: Date.now(), from: 'inbar', txt: 'heyyyy' }, { at: Date.now(), from: 'Moshe', txt: 'how ary you?' }]
     //  msgService.conected();
@@ -129,7 +131,8 @@ export default {
       return { txt: '', processed: false, from: this.nickName, at: moment().format('h:mm A') };
     },
     toChatPreview() {
-      this.$emit('toggleChat');
+        this.$emit('toggleChat');
+      // this.$router.push('matches');
     },
     msgClass(msg) {
       return (msg.from !== this.nickName) ? 'received' : 'sent';
@@ -173,6 +176,10 @@ export default {
 
 .screen-container {
   height: 100%;
+}
+
+.el-icon-arrow-left{
+  cursor: pointer;
 }
 
 

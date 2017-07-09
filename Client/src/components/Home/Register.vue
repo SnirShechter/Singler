@@ -55,7 +55,10 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import Router from 'vue-router'
 export default {
+
   name: 'register',
   data() {
     return {
@@ -115,8 +118,10 @@ export default {
         }
       }
       console.log(user); // <----------- CONSOLE.LOG
-      if (this.prefs.repeatPassword === user.password)
+      if (this.prefs.repeatPassword === user.password) {
         this.register(user)
+        this.$router.push('matcher');
+      }
       else
         this.$notify.error({
           title: 'Error',

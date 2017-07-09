@@ -5,6 +5,7 @@ import myProfile from '@/components/MyProfile/MyProfile'
 import register from '@/components/Home/Register'
 import matcher from '@/components/Matcher/Matcher'
 import matches from '@/components/Matches/Matches'
+import chat from '@/components/Matches/Chat'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import locale from 'element-ui/lib/locale/lang/en'
@@ -43,6 +44,11 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: register
+    },
+    {
+      path: '/chat/:id',
+      name: 'Chat',
+      component: chat
     }
   ],
   mode: 'history'

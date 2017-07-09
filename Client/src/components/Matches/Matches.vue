@@ -16,12 +16,13 @@ export default {
     return {
       selected: null,
       chatName: 'chat',
-      isInChat: true,
+       isInChat: true,
     }
 
   },
   methods: {
     selectMatch(currMatch) {
+      // this.$router.push('/chat/'+currMatch._Id)
       console.log('selceting match : ', currMatch._Id)
       this.selected = currMatch._Id;
       this.isInChat = !this.isInChat;
