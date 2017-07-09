@@ -34,7 +34,7 @@ const matches = [
             fName: 'match1',                                   // name: 'Snir Shechter'
             lName: 'match1',                                   // name: 'Snir Shechter'
             birthdate: '2305823058',                        // birthdate: '23235232352' - IN MILISECONDS
-            imgUrl: 'http://nowhere.com/img.png',                        // birthdate: '23235232352' - IN MILISECONDS
+            imgUrl: 'http://via.placeholder.com/150x150',                        // birthdate: '23235232352' - IN MILISECONDS
             isMale: true,                                   // isMale: true
             position: { lat: '23509.2', lng: '340943.2' },       // position:{lat:3395.22,lng:2341.65}
             interests: ['Gaming', 'Web Surfing', 'Movies'],    // interests: ['Soccer','Gaming','Shopping','Movies']
@@ -52,7 +52,7 @@ const matches = [
             fName: 'match2',                                   // name: 'Snir Shechter'
             lName: 'match2',                                   // name: 'Snir Shechter'
             birthdate: '2305823058',                        // birthdate: '23235232352' - IN MILISECONDS
-            imgUrl: 'http://nowhere.com/img.png',                        // birthdate: '23235232352' - IN MILISECONDS
+            imgUrl: 'http://via.placeholder.com/150x150',                        // birthdate: '23235232352' - IN MILISECONDS
             isMale: true,                                   // isMale: true
             position: { lat: '23509.2', lng: '340943.2' },       // position:{lat:3395.22,lng:2341.65}
             interests: ['Gaming', 'Web Surfing', 'Movies'],    // interests: ['Soccer','Gaming','Shopping','Movies']

@@ -112,6 +112,37 @@ app.get('/data/:objType/:id', function (req, res) {
 		});
 });
 
+
+// GETs a match by "match Id"
+// app.get('/data/matches/:mid', function (req, res) {
+// 	const objType = req.params.objType;
+// 	const objId = req.params.id;
+// 	cl(`Getting you an ${objType} with id: ${objId}`);
+// 	dbConnect()
+// 		.then((db) => {
+// 			const collection = db.collection(objType);
+// 			let _id;
+// 			try {
+// 				_id = new mongodb.ObjectID(objId);
+// 			}
+// 			catch (e) {
+// 				return Promise.reject(e);
+// 			}
+// 			return collection.findOne({ _id: _id })
+// 				.then((obj) => {
+// 					cl("Returning a single item from " + objType);
+// 					res.json(obj);
+// 					db.close();	
+// 				})
+// 				.catch(err => {
+// 					cl('Cannot get you that ', err)
+// 					res.json(404, { error: 'not found' })
+// 					db.close();	
+// 				})
+
+// 		});
+// });
+
 // GET matches per user
 // app.get('/data/:objType/:id', function (req, res) {
 app.get('/data/stam/matches/:id', function (req, res) {
@@ -147,30 +178,107 @@ app.get('/data/stam/matches/:id', function (req, res) {
 
 // PUT - update like for user
 app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
+// app.put('/data/:objType/:id/:newUname', function (req, res) {
 	// const objType 	= req.params.objType;
 	const objId 	= req.params.id;
 	const targetId 	= req.params.trgId;
 	const isLike 	=  req.params.like;
+	// const newObj 	= req.body;
+	// const newUname 	=  req.params.newUname;
 	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
 
 	cl(`Requested to update the likes of id: ${objId}`);
 
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
-		collection.updateOne({ _id: objId }, {$set: { "likes": {[targetId]: isLike} }},
+		collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}},
 			(err, result) => {
 				if (err) {
 					cl('Cannot Update', err)
 					res.json(500, { error: 'Update failed' })
 				} else {
 					// res.json(newObj);
-					cl('update likes: ', newObj);
+					if (isLike) {
+						check4Match(collection, objId, targetId, res);
+					}
+					cl('updated likes of: ', objId);
 				}
 				db.close();
 			});
 	});
 });
 
+
+function check4Match(collection, objId, targetId, res) {
+	console.log('entered function check4Matche...');
+	var _targetId = new mongodb.ObjectID(targetId);
+	
+	//  Checking whether the user got like back
+	return collection.findOne({ _id: _targetId, "likes": {[objId] : "true"} })
+		.then((trgObj) => {
+			if(trgObj) {
+				cl("Found MATCH for: " + _targetId + '!!!');
+				// res.json(trgObj);
+				handleMatch(collection, objId, targetId, res);
+			} else {
+				cl('no match!');
+			}
+		})
+		.catch(err => {
+			cl('Cannot get you that ', err)
+			res.status(404).json({ error: 'not found' });
+		})
+}
+
+
+function handleMatch(collection, objId, targetId, res)
+{
+	updateMatchDB(objId, targetId, res);
+	// Continue from here... Taly.
+	// var matchId = "595cf6e2211d5f28b4ee6991";
+	// updateMatch2User(collection, matchId, objId, targetId, res);
+	// updateMatch2User(collection, matchId, objId, targetId, res);
+
+	// Send MATCH by socket?? or service worker??
+}
+
+function updateMatchDB(objId, targetId, res)
+{
+	cl("entered updateMatchDB");
+	// bug?!?: connecting to db, though already connected
+	dbConnect().then((db) => {
+		const collection = db.collection('matches');
+		var matchObj = {date: Date.now(), id1:objId, id2:targetId, msg:[]};
+		collection.insert(matchObj, (err, result) => {
+			if (err) {
+				cl("Couldnt insert match", err)
+				res.json(500, { error: 'Failed to add' })
+			} else {
+				cl("match added");
+				res.json(matchObj);
+			}
+			db.close();
+		});
+	});
+}
+
+function updateMatch2User(collection, matchId, objId, targetId, res)
+{
+	cl("entered update Match 2User function");
+	// const collection = db.collection('users');
+	// collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}}
+	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "matches": {[matchId] : objId}}}, 
+		(err, result) => {
+		if (err) {
+			cl("Couldnt insert match", err)
+			res.json(500, { error: 'Failed to add' })
+		} else {
+			cl("match added");
+			// res.json(MatchObj);
+		}
+	});
+
+}
 
 // DELETE
 // app.delete('/data/:objType/:id', function (req, res) {
@@ -193,36 +301,35 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 // 	});
 // });
 
-// POST - adds 
-// app.post('/data/:objType', upload.single('file'), function (req, res) {
-// 	//console.log('req.file', req.file);
-// 	// console.log('req.body', req.body);
+// POST - adds user
+app.post('/data/:objType', upload.single('file'), function (req, res) {
+	const objType = req.params.objType;
+	cl("POST for " + objType);
 
-// 	const objType = req.params.objType;
-// 	cl("POST for " + objType);
+	const obj = req.body;
+	// delete obj._id;
 
-// 	const obj = req.body;
-// 	delete obj._id;
-// 	// If there is a file upload, add the url to the obj
-// 	if (req.file) {
-// 		obj.imgUrl = serverRoot + req.file.filename;
-// 	}
+	// If there is a file upload, add the url to the obj
+	if (req.file) {
+		obj.imgUrl = serverRoot + req.file.filename;
+	}
 
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection(objType);
 
-// 		collection.insert(obj, (err, result) => {
-// 			if (err) {
-// 				cl(`Couldnt insert a new ${objType}`, err)
-// 				res.json(500, { error: 'Failed to add' })
-// 			} else {
-// 				cl(objType + " added");
-// 				res.json(obj);
-// 			}
-// 			db.close();
-// 		});
-// 	});
-// });
+	dbConnect().then((db) => {
+		const collection = db.collection(objType);
+
+		collection.insert(obj, (err, result) => {
+			if (err) {
+				cl(`Couldnt insert a new ${objType}`, err)
+				res.json(500, { error: 'Failed to add' })
+			} else {
+				cl(objType + " added");
+				res.json(obj);
+			}
+			db.close();
+		});
+	});
+});
 
 // PUT - updates
 // app.put('/data/:objType/:id', function (req, res) {
@@ -234,7 +341,7 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 // 	cl(`Requested to UPDATE the ${objType} with id: ${objId}`);
 // 	dbConnect().then((db) => {
 // 		const collection = db.collection(objType);
-// 		collection.updateOne({ _id: new mongodb.ObjectID(objId) }, newObj,
+// 		collection.updateOne({ _id: new mongodb. (objId) }, newObj,
 // 			(err, result) => {
 // 				if (err) {
 // 					cl('Cannot Update', err)
@@ -266,6 +373,7 @@ app.post('/login', function (req, res) {
 				// res.json(403, { error: 'Login failed' })
 				res.status(403).json({ error: 'Login failed' })
 			}
+			db.close();
 		});
 	});
 });
@@ -286,6 +394,8 @@ function requireLogin(req, res, next) {
 app.get('/protected', requireLogin, function (req, res) {
 	res.end('User is loggedin, return some data');
 });
+
+
 
 
 // Kickup our server 
