@@ -198,9 +198,9 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 					res.json(500, { error: 'Update failed' })
 				} else {
 					// res.json(newObj);
-					// if (isLike) {
-					// 	check4Match(collection, objId, targetId);
-					// }
+					if (isLike) {
+						check4Match(collection, objId, targetId, res);
+					}
 					cl('updated likes of: ', objId);
 				}
 				db.close();
@@ -209,18 +209,75 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 });
 
 
-function check4Match(collection, objId, targetId) {
+function check4Match(collection, objId, targetId, res) {
 	console.log('entered function check4Matche...');
-	let _trgId = new mongodb.ObjectID(targetId);
+	var _targetId = new mongodb.ObjectID(targetId);
 	
-	var targetUser = collection.findOne({ _id: _trgId });
-	if (targetUser){
-		for(var i=0; i<targetUser.likes.length; i++){
-			if(targetUser.likes[i] === (new mongodb.ObjectID(objId))) {
-				cl('found match!!');
+	//  Checking whether the user got like back
+	return collection.findOne({ _id: _targetId, "likes": {[objId] : "true"} })
+		.then((trgObj) => {
+			if(trgObj) {
+				cl("Found MATCH for: " + _targetId + '!!!');
+				// res.json(trgObj);
+				handleMatch(collection, objId, targetId, res);
+			} else {
+				cl('no match!');
 			}
+		})
+		.catch(err => {
+			cl('Cannot get you that ', err)
+			res.status(404).json({ error: 'not found' });
+		})
+}
+
+
+function handleMatch(collection, objId, targetId, res)
+{
+	updateMatchDB(objId, targetId, res);
+	// Continue from here... Taly.
+	// var matchId = "595cf6e2211d5f28b4ee6991";
+	// updateMatch2User(collection, matchId, objId, targetId, res);
+	// updateMatch2User(collection, matchId, objId, targetId, res);
+
+	// Send MATCH by socket?? or service worker??
+}
+
+function updateMatchDB(objId, targetId, res)
+{
+	cl("entered updateMatchDB");
+	// bug?!?: connecting to db, though already connected
+	dbConnect().then((db) => {
+		const collection = db.collection('matches');
+		var matchObj = {date: Date.now(), id1:objId, id2:targetId, msg:[]};
+		collection.insert(matchObj, (err, result) => {
+			if (err) {
+				cl("Couldnt insert match", err)
+				res.json(500, { error: 'Failed to add' })
+			} else {
+				cl("match added");
+				res.json(matchObj);
+			}
+			db.close();
+		});
+	});
+}
+
+function updateMatch2User(collection, matchId, objId, targetId, res)
+{
+	cl("entered update Match 2User function");
+	// const collection = db.collection('users');
+	// collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}}
+	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "matches": {[matchId] : objId}}}, 
+		(err, result) => {
+		if (err) {
+			cl("Couldnt insert match", err)
+			res.json(500, { error: 'Failed to add' })
+		} else {
+			cl("match added");
+			// res.json(MatchObj);
 		}
-	}
+	});
+
 }
 
 // DELETE
