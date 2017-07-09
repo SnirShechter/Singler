@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: 'Matcher',
+  name: 'matcher',
   data() {
     return {
     }
