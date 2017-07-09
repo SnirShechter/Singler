@@ -212,14 +212,14 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	const userId = req.params.id;
 	const likedUserId = req.params.trgId;
 	const isLike = (req.params.like === 'like');
-
+	cl(userId, likedUserId, isLike);
 	cl(`Requested to update the likes of id: ${userId}`);
 
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
 		//add like to current user
 		collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "likes": { [likedUserId]: isLike } } })
-			.then((result) => { //check for metch with other user
+			.then((result) => { //check for match with other user
 				cl('got like checking match')
 				// return check4Match(collection, objId, targetId, res);
 				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
@@ -234,7 +234,7 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 							db.close();
 						});
 				}
-				res.json({ messege: 'updateded' });
+				res.json({ messege: 'updated' });
 			})
 			.catch(err => {
 				cl('Cannot get you that ', err)
@@ -348,6 +348,9 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 	cl("POST for " + objType);
 
 	const obj = req.body;
+	obj.likes = []
+	obj.matches = [];
+
 	// delete obj._id;
 
 	// If there is a file upload, add the url to the obj
@@ -456,10 +459,8 @@ app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
 
 // Basic Login/Logout/Protected assets
 app.post('/login', function (req, res) {
-	console.log('entered login');
+	console.log(`login attempt with uName:${req.body.uName}, password:${req.body.password}`);
 	dbConnect().then((db) => {
-		console.log(req.body.uName);
-		console.log(req.body.password);
 		db.collection('users').findOne({ uName: req.body.uName, password: req.body.password }, function (err, user) {
 			if (user) {
 				cl('Login Succesful');

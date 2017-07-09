@@ -1,14 +1,14 @@
 <template>
-    <section class="log-in">
+    <section class="login">
         </el-alert>
         <h1>
             <span class="theme"> Singler </span>
         </h1>
         <el-input class="sign-in" type="text" placeholder="Username" v-model="username"></el-input>
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
-        <el-button class="sign-in" type="primary">Log in</el-button>
+        <el-button class="sign-in" type="primary" @click="login">Log in</el-button>
         <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
-        <p>you don`t have acount yet?
+        <p>you don`t have account yet?
             <router-link to="/register"> register now! </router-link>
         </p>
     </section>
@@ -16,11 +16,17 @@
 
 <script>
 export default {
-    name: 'log-in',
+    name: 'login',
     data() {
         return {
             username: '',
             password: ''
+        }
+    },
+    methods: {
+        login() {
+            console.log(this.username,this.password);
+            this.$store.dispatch('login',{uName:this.username, password:this.password});
         }
     }
 }
@@ -59,5 +65,4 @@ h1 {
 router-link {
     color: var(--theme-color);
 }
-
 </style>

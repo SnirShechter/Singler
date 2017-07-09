@@ -9,19 +9,20 @@
 
 <script>
 import chatPreview from './ChatPreview'
-import chat from './chat'
+import chat from './Chat'
 export default {
   name: 'Matches',
   data() {
     return {
       selected: null,
       chatName: 'chat',
-      isInChat: true,
+       isInChat: true,
     }
 
   },
   methods: {
     selectMatch(currMatch) {
+      // this.$router.push('/chat/'+currMatch._Id)
       console.log('selceting match : ', currMatch._Id)
       this.selected = currMatch._Id;
       this.isInChat = !this.isInChat;

@@ -1,22 +1,22 @@
 <template>
   <section class="myProfile">
     <h1>
-      <span class="theme">{{this.profile.fName+ ' '+ this.profile.lName}}</span>
+      <span class="theme">{{$store.state.profile.fName+ ' '+ $store.state.profile.lName}}</span>
     </h1>
     <img src="../../assets/profile.png"></img>
     <div class="details">
       <p>
-        <span class="theme">First Name</span> {{this.profile.fName}}</p>
+        <span class="theme">First Name</span> {{$store.state.profile.fName}}</p>
       <p>
-        <span class="theme">Last Name</span> {{this.profile.lName}}</p>
+        <span class="theme">Last Name</span> {{$store.state.profile.lName}}</p>
       <p>
-        <span class="theme">Birthdate</span> 25.5.12</p>
+        <span class="theme">Birthdate</span> {{$store.getters.myAge}}</p>
       <p>
-        <span class="theme">Gender</span> Male</p>
+        <span class="theme">Gender</span> {{$store.getters.myGender}}</p>
       <p>
-        <span class="theme">Interests</span>{{this.$store.getters.myAge}}</p>
+        <span class="theme">Interests</span> {{$store.state.profile.interests}}</p>
       <p>
-        <span class="theme">Description</span> {{this.profile.desc}} </p>
+        <span class="theme">Description</span> {{$store.state.profile.desc}} </p>
       <div class="btns">
         <el-button @click="showLikes" type="primary"> ✎ Edit</el-button>
         <el-button @click="commitChange" type="primary"> ⚙ Settings</el-button>
@@ -30,12 +30,11 @@ export default {
   name: 'MyProfile',
   data() {
     return {
-      profile:this.$store.state.user.profile
+
     }
   }
   , methods: {
     showLikes() {
-      console.log(this.$store.state.user);
       this.$notify({
         title: 'Success',
         message: 'This is a success message',
@@ -43,10 +42,10 @@ export default {
       });
     },
     commitChange() {
-      var like = {'522': true};
+      var like = { '522': true };
       this.$store.commit('like', like)
     }
-  } 
+  }
 }
 </script>
 
