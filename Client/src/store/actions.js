@@ -36,7 +36,7 @@ export default {
       })
   },
   like(context, { targetId, isLiked }) {
-    axios.put('/like', {
+    axios.put('http://localhost:3003/data/users', {
       myId: context.user._id,
       targetId,
       isLiked

@@ -177,17 +177,19 @@ app.get('/data/stam/matches/:id', function (req, res) {
 });
 
 // PUT - update like for user
-app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
+app.put('localhost:3003/data/:objType/:id/like', function (req, res) {
 // app.put('/data/:objType/:id/:newUname', function (req, res) {
 	// const objType 	= req.params.objType;
+	// const targetId 	= req.params.trgId;
+	// const isLike 	=  req.params.like;
 	const objId 	= req.params.id;
-	const targetId 	= req.params.trgId;
-	const isLike 	=  req.params.like;
-	// const newObj 	= req.body;
+	const trgId = req.body.trgId;
+	const isLiked = req.body.isLiked;
+
 	// const newUname 	=  req.params.newUname;
 	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
 
-	cl(`Requested to update the likes of id: ${objId}`);
+	cl(`${id} Requested to like id: ${trgId} with ${isLiked}`);
 
 	dbConnect().then((db) => {
 		const collection = db.collection('users');

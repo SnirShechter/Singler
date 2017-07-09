@@ -1,17 +1,17 @@
 <template>
   <section class="matcher">
     <div class="img-container">
-      <img src="../../assets/userImgs/sample.jpg" v-if="nextUser"></img>
-      <p class="details">
-        <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
-        <span class="age" v-if="nextUser">{{this.$store.getters.nextUserAge}}</span>
-      </p>
-      <div class="btns">
-        <button @click="changeProfile(false)" class="unlike">X</button>
-        <button @click="changeProfile(true)" class="like">V</button>
+      <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
+        <p :class="{details: !isShowingDetails}">
+          <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
+          <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
+        </p>
+        <div class="btns">
+          <button @click="changeProfile(false) " class="unlike ">X</button>
+          <button @click="changeProfile(true) " class="like ">V</button>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 </template>
 
 <script>
@@ -19,6 +19,7 @@ export default {
   name: 'matcher',
   data() {
     return {
+      isShowingDetails: false
     }
   },
   computed: {
@@ -30,6 +31,9 @@ export default {
     changeProfile(isLiked) {
       // console.log(this.nextUser);
       this.$store.commit('like', { targetId: this.nextUser._id, isLiked })
+    },
+    showDetails(){
+      this.isShowingDetails = !this.isShowingDetails;
     }
   }
 }
@@ -38,6 +42,10 @@ export default {
 <style lang="scss" scoped>
 .img-container {
   width: 100%;
+}
+
+.img-smaller{
+  width:80%;
 }
 
 .btns {
@@ -76,10 +84,11 @@ img {
   max-width: 500px;
   max-height: 70vh;
 }
-
+p{
+  text-align: left;
+}
 .details {
   color: white;
-  text-align: left;
   line-height: 56px;
   margin: 0;
   padding: 0;
