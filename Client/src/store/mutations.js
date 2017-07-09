@@ -11,7 +11,7 @@ export default {
         state.filtermap = data.filtermap;
     },
     addUsers(state,users) {
-        state.usersToShow.push.apply(this,users);
+        state.usersToShow.push(...users);
     },
     editProfile(state, profile) {
         state.profile = profile;
