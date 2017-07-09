@@ -34,10 +34,11 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
-  getUsersToShow(){
+  getUsersToShow(context){
     axios.get(`${SERVER_URL}/data/users`)
     .then((res)=>{
-      context.commit('addUsers',res.body)
+      console.log(res.data);
+      context.commit('addUsers',res.data)
     })
   },
   like(context, targetId, isLiked) {

@@ -10,7 +10,7 @@ export default {
         state.matches = data.matches;
         state.filtermap = data.filtermap;
     },
-    addUsers(users) {
+    addUsers(state,users) {
         state.usersToShow.push.apply(this,users);
     },
     editProfile(state, profile) {

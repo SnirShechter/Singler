@@ -2,21 +2,24 @@
   <section class="matcher">
     <div class="img-container">
       <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
-        <p :class="{details: !isShowingDetails}">
-          <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
-          <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
-        </p>
-        <div class="btns">
-          <button @click="changeProfile(false) " class="unlike ">X</button>
-          <button @click="changeProfile(true) " class="like ">V</button>
-        </div>
+      <p :class="{details: !isShowingDetails}">
+        <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
+        <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
+      </p>
+      <div class="btns">
+        <button @click="changeProfile(false) " class="unlike ">X</button>
+        <button @click="changeProfile(true) " class="like ">V</button>
       </div>
-    </section>
+    </div>
+  </section>
 </template>
 
 <script>
 export default {
   name: 'matcher',
+  created() {
+    this.$store.dispatch('getUsersToShow');
+  },
   data() {
     return {
       isShowingDetails: false
@@ -29,10 +32,10 @@ export default {
   },
   methods: {
     changeProfile(isLiked) {
-      // console.log(this.nextUser);
+      if (this.$store.state.usersToShow.length < 5) this.$store.dispatch('getUsersToShow');
       this.$store.dispatch('like', this.nextUser._id, isLiked)
     },
-    showDetails(){
+    showDetails() {
       this.isShowingDetails = !this.isShowingDetails;
     }
   }
@@ -44,8 +47,8 @@ export default {
   width: 100%;
 }
 
-.img-smaller{
-  width:80%;
+.img-smaller {
+  width: 80%;
 }
 
 .btns {
@@ -84,9 +87,11 @@ img {
   max-width: 500px;
   max-height: 70vh;
 }
-p{
+
+p {
   text-align: left;
 }
+
 .details {
   color: white;
   line-height: 56px;
