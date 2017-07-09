@@ -240,7 +240,7 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 				cl('Cannot get you that ', err)
 				res.status(404).json({ error: 'not found' });
 				db.close();
-			});;
+			});
 	});
 });
 
@@ -266,60 +266,60 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 // 		})
 // }
 
-function check4Match(collection, objId, targetId, res) {
-	console.log('entered function check4Matche...');
-	var _targetId = new mongodb.ObjectID(targetId);
+// function check4Match(collection, objId, targetId, res) {
+// 	console.log('entered function check4Matche...');
+// 	var _targetId = new mongodb.ObjectID(targetId);
 
-	//  Checking whether the user got like back
-	return collection.findOne({ _id: _targetId, "likes": { [objId]: "true" } });
-}
+// 	//  Checking whether the user got like back
+// 	return collection.findOne({ _id: _targetId, "likes": { [objId]: "true" } });
+// }
 
 
-function handleMatch(objId, targetId, res) {
-	updateMatchDB(objId, targetId, res);
-	// Continue from here... Taly.
-	// var matchId = "595cf6e2211d5f28b4ee6991";
-	// updateMatch2User(collection, matchId, objId, targetId, res);
-	// updateMatch2User(collection, matchId, objId, targetId, res);
+// function handleMatch(objId, targetId, res) {
+// 	updateMatchDB(objId, targetId, res);
+// 	// Continue from here... Taly.
+// 	// var matchId = "595cf6e2211d5f28b4ee6991";
+// 	// updateMatch2User(collection, matchId, objId, targetId, res);
+// 	// updateMatch2User(collection, matchId, objId, targetId, res);
 
-	// Send MATCH by socket?? or service worker??
-}
+// 	// Send MATCH by socket?? or service worker??
+// }
 
-function updateMatchDB(objId, targetId, res) {
-	cl("entered updateMatchDB");
-	// bug?!?: connecting to db, though already connected
-	dbConnect().then((db) => {
-		const collection = db.collection('matches');
-		var matchObj = { date: Date.now(), id1: objId, id2: targetId, msg: [] };
-		collection.insert(matchObj, (err, result) => {
-			if (err) {
-				cl("Couldnt insert match", err)
-				res.json(500, { error: 'Failed to add' })
-			} else {
-				cl("match added");
-				res.json(matchObj);
-			}
-			db.close();
-		});
-	});
-}
+// function updateMatchDB(objId, targetId, res) {
+// 	cl("entered updateMatchDB");
+// 	// bug?!?: connecting to db, though already connected
+// 	dbConnect().then((db) => {
+// 		const collection = db.collection('matches');
+// 		var matchObj = { date: Date.now(), id1: objId, id2: targetId, msg: [] };
+// 		collection.insert(matchObj, (err, result) => {
+// 			if (err) {
+// 				cl("Couldnt insert match", err)
+// 				res.json(500, { error: 'Failed to add' })
+// 			} else {
+// 				cl("match added");
+// 				res.json(matchObj);
+// 			}
+// 			db.close();
+// 		});
+// 	});
+// }
 
-function updateMatch2User(collection, matchId, objId, targetId, res) {
-	cl("entered update Match 2User function");
-	// const collection = db.collection('users');
-	// collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}}
-	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, { $addToSet: { "matches": { [matchId]: objId } } },
-		(err, result) => {
-			if (err) {
-				cl("Couldnt insert match", err)
-				res.json(500, { error: 'Failed to add' })
-			} else {
-				cl("match added");
-				// res.json(MatchObj);
-			}
-		});
+// function updateMatch2User(collection, matchId, objId, targetId, res) {
+// 	cl("entered update Match 2User function");
+// 	// const collection = db.collection('users');
+// 	// collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}}
+// 	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, { $addToSet: { "matches": { [matchId]: objId } } },
+// 		(err, result) => {
+// 			if (err) {
+// 				cl("Couldnt insert match", err)
+// 				res.json(500, { error: 'Failed to add' })
+// 			} else {
+// 				cl("match added");
+// 				// res.json(MatchObj);
+// 			}
+// 		});
 
-}
+// }
 
 // DELETE
 // app.delete('/data/:objType/:id', function (req, res) {
@@ -371,6 +371,65 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 		});
 	});
 });
+
+
+
+/////////////////////////////////////////////////////////////////////////
+// /data/chat/messages/
+// Add message
+app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
+	const objType = req.params.objType;
+	cl("POST for " + objType);
+	const obj = req.body;
+	obj.date = Date.now();
+	// If there is a file upload, add the url to the obj
+	if (req.file) {
+		obj.imgUrl = serverRoot + req.file.filename;
+	}
+
+	dbConnect().then((db) => {
+		const collection = db.collection(objType);
+
+		collection.insert(obj, (err, result) => {
+			if (err) {
+				cl(`Couldnt insert message ${objType}`, err)
+				res.json(500, { error: 'Failed to add message' })
+			} else {
+				cl(objType + " added");
+				res.json(obj);
+			}
+			db.close();
+		})
+	}).catch(err => {
+		cl('Cannot connect to db... ', err)
+		res.status(500).json({ error: 'Cannot connect to db...' });
+	});
+});
+
+
+// GETs a list of messages of 2 users
+app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
+	const objType = req.params.objType;
+	const fromId = req.params.fromId;
+	const toId = req.params.toId;
+	dbConnect().then(db => {
+		const collection = db.collection(objType);
+
+		collection.find({ toId: { $in: [ fromId, toId ] },fromId: { $in: [ toId, fromId ] }}).toArray((err, objs) => {
+			if (err) {
+				cl('Cannot get you a list of ', err)
+				res.json(404, { error: 'not found' })
+			} else {
+				cl("Returning list of " + objs.length + " " + objType);
+				res.json(objs);
+			}
+			db.close();
+		});
+	});
+});
+
+/////////////////////////////////////////////////////////////////////////
+
 
 // PUT - updates
 // app.put('/data/:objType/:id', function (req, res) {
