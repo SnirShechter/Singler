@@ -12,7 +12,7 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
-  login(context,  {uName, password}) {
+  login(context, { uName, password }) {
     console.log(password);
     axios.post(`${SERVER_URL}/login`, { uName, password })
       .then((res) => {
@@ -34,34 +34,34 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
-  getUsersToShow(context){
+  getUsersToShow(context) {
     axios.get(`${SERVER_URL}/data/users`)
-    .then((res)=>{
-      console.log(res.data);
-      context.commit('addUsers',res.data)
-    })
-  },
-  like(context, targetId, isLiked) {
-    isLiked? 'like':'not';
-    console.log('liking');
-    var a = axios.put(`http://localhost:3003/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
-        console.log('liking then');
-        console.log('LIKED, res: '+res);
+        console.log(res.data);
+        context.commit('addUsers', res.data)
+      })
+  },
+  like(context, {targetId, isLiked}) {
+    console.log(context.state)
+    console.log(isLiked);
+    isLiked = isLiked ? 'like' : 'not';
+    console.log(isLiked);
+    axios.put(`http://localhost:3003/data/users/${context.state._id}/${targetId}/${isLiked}`)
+      .then((res) => {
+        console.log('LIKED, res: ' + res);
+        if (res.data.isMatch) {
+          context.dispatch('match', targetId, this.$store.getters.nextUser.profile);
+        }
         context.commit('like', { targetId, isLiked });
-        // if (res.data.date) {
-        //   context.dispatch('match', data.match);
-        // }
       })
       .catch((error) => {
-        console.log('liking catch');
         console.log(error);
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
-      console.log(a);
   },
-  match(context, data) {
-    context.commit('match', data);
+  match(context, targetId, targetProfile) {
+    var match = { targetId, targetProfile, msgs: [] };
+    context.commit('match', match);
     this.$message('You have a new match!!!');
   },
   unmatch(context, matchId) {

@@ -64,17 +64,20 @@ function dbConnect() {
 }
 
 // GETs a list
-app.get('/data/:objType', function (req, res) {
-	const objType = req.params.objType;
+app.get('/data/users', function (req, res) {
+	const objType = 'users';
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
-
 		collection.find({}).toArray((err, objs) => {
 			if (err) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
 			} else {
 				cl("Returning list of " + objs.length + " " + objType); // + "s");
+				objs = objs.map(obj => {
+					obj.profile._id = obj._id;
+					return obj.profile;
+				})
 				res.json(objs);
 			}
 			db.close();
@@ -418,7 +421,7 @@ app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
 
-		collection.find({ toId: { $in: [ fromId, toId ] },fromId: { $in: [ toId, fromId ] }}).toArray((err, objs) => {
+		collection.find({ toId: { $in: [fromId, toId] }, fromId: { $in: [toId, fromId] } }).toArray((err, objs) => {
 			if (err) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })

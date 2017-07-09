@@ -21,7 +21,7 @@ export default {
         state.usersToShow.splice(0, 1);
     },
     match(state, match) {
-        state.matches[match._id] = match;
+        state.matches[match.targetId] = match;
     },
     unmatch(state, matchId) {
         delete state.matches[matchId];
