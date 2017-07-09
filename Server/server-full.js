@@ -101,12 +101,12 @@ app.get('/data/:objType/:id', function (req, res) {
 				.then((obj) => {
 					cl("Returning a single item from " + objType);
 					res.json(obj);
-					db.close();	
+					db.close();
 				})
 				.catch(err => {
 					cl('Cannot get you that ', err)
 					res.json(404, { error: 'not found' })
-					db.close();	
+					db.close();
 				})
 
 		});
@@ -164,75 +164,118 @@ app.get('/data/stam/matches/:id', function (req, res) {
 				.then((obj) => {
 					cl("Returning the matches for " + objId);
 					res.json(obj.matches);
-					db.close();	
+					db.close();
 				})
 				.catch(err => {
 					cl('Cannot get you that ', err)
 					// res.json(404, { error: 'not found' })
 					res.status(404).json({ error: 'not found' });
-					db.close();	
+					db.close();
 				})
 
 		});
 });
 
 // PUT - update like for user
-app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
-// app.put('/data/:objType/:id/:newUname', function (req, res) {
-	// const objType 	= req.params.objType;
-	const objId 	= req.params.id;
-	const targetId 	= req.params.trgId;
-	const isLike 	=  req.params.like;
-	// const newObj 	= req.body;
-	// const newUname 	=  req.params.newUname;
-	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
+// app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
+// // app.put('/data/:objType/:id/:newUname', function (req, res) {
+// 	// const objType 	= req.params.objType;
+// 	const objId 	= req.params.id;
+// 	const targetId 	= req.params.trgId;
+// 	const isLike 	=  req.params.like;
+// 	// const newObj 	= req.body;
+// 	// const newUname 	=  req.params.newUname;
+// 	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
 
-	cl(`Requested to update the likes of id: ${objId}`);
+// 	cl(`Requested to update the likes of id: ${objId}`);
+
+// 	dbConnect().then((db) => {
+// 		const collection = db.collection('users');
+// 		collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}},
+// 			(err, result) => {
+// 				if (err) {
+// 					cl('Cannot Update', err)
+// 					res.json(500, { error: 'Update failed' })
+// 				} else {
+// 					// res.json(newObj);
+// 					if (isLike) {
+// 						check4Match(collection, objId, targetId, res);
+// 					}
+// 					cl('updated likes of: ', objId);
+// 				}
+// 				db.close();
+// 			});
+// 	});
+// });
+
+app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
+	const userId = req.params.id;
+	const likedUserId = req.params.trgId;
+	const isLike = (req.params.like === 'like');
+
+	cl(`Requested to update the likes of id: ${userId}`);
 
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
-		collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}},
-			(err, result) => {
-				if (err) {
-					cl('Cannot Update', err)
-					res.json(500, { error: 'Update failed' })
-				} else {
-					// res.json(newObj);
-					if (isLike) {
-						check4Match(collection, objId, targetId, res);
-					}
-					cl('updated likes of: ', objId);
+		//add like to current user
+		collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "likes": { [likedUserId]: isLike } } })
+			.then((result) => { //check for metch with other user
+				cl('got like checking match')
+				// return check4Match(collection, objId, targetId, res);
+				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
+			}).then((matchResult) => { //update match
+				cl('got like checking match');
+				if (matchResult) { //found match
+					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": { [likedUserId]: true } } })
+						.then(() => {
+							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": { [userId]: true } } });
+						})
+						.then(() => {
+							db.close();
+						});
 				}
+				res.json({ messege: 'updateded' });
+			})
+			.catch(err => {
+				cl('Cannot get you that ', err)
+				res.status(404).json({ error: 'not found' });
 				db.close();
-			});
+			});;
 	});
 });
 
 
+// function check4Match(collection, objId, targetId, res) {
+// 	console.log('entered function check4Matche...');
+// 	var _targetId = new mongodb.ObjectID(targetId);
+
+// 	//  Checking whether the user got like back
+// 	return collection.findOne({ _id: _targetId, "likes": { [objId]: "true" } })
+// 		.then((trgObj) => {
+// 			if (trgObj) {
+// 				cl("Found MATCH for: " + _targetId + '!!!');
+// 				// res.json(trgObj);
+// 				handleMatch(collection, objId, targetId, res);
+// 			} else {
+// 				cl('no match!');
+// 			}
+// 		})
+// 		.catch(err => {
+// 			cl('Cannot get you that ', err)
+// 			res.status(404).json({ error: 'not found' });
+// 		})
+// }
+
 function check4Match(collection, objId, targetId, res) {
 	console.log('entered function check4Matche...');
 	var _targetId = new mongodb.ObjectID(targetId);
-	
+
 	//  Checking whether the user got like back
-	return collection.findOne({ _id: _targetId, "likes": {[objId] : "true"} })
-		.then((trgObj) => {
-			if(trgObj) {
-				cl("Found MATCH for: " + _targetId + '!!!');
-				// res.json(trgObj);
-				handleMatch(collection, objId, targetId, res);
-			} else {
-				cl('no match!');
-			}
-		})
-		.catch(err => {
-			cl('Cannot get you that ', err)
-			res.status(404).json({ error: 'not found' });
-		})
+	return collection.findOne({ _id: _targetId, "likes": { [objId]: "true" } });
 }
 
 
-function handleMatch(collection, objId, targetId, res)
-{
+function handleMatch(objId, targetId, res) {
 	updateMatchDB(objId, targetId, res);
 	// Continue from here... Taly.
 	// var matchId = "595cf6e2211d5f28b4ee6991";
@@ -242,13 +285,12 @@ function handleMatch(collection, objId, targetId, res)
 	// Send MATCH by socket?? or service worker??
 }
 
-function updateMatchDB(objId, targetId, res)
-{
+function updateMatchDB(objId, targetId, res) {
 	cl("entered updateMatchDB");
 	// bug?!?: connecting to db, though already connected
 	dbConnect().then((db) => {
 		const collection = db.collection('matches');
-		var matchObj = {date: Date.now(), id1:objId, id2:targetId, msg:[]};
+		var matchObj = { date: Date.now(), id1: objId, id2: targetId, msg: [] };
 		collection.insert(matchObj, (err, result) => {
 			if (err) {
 				cl("Couldnt insert match", err)
@@ -262,21 +304,20 @@ function updateMatchDB(objId, targetId, res)
 	});
 }
 
-function updateMatch2User(collection, matchId, objId, targetId, res)
-{
+function updateMatch2User(collection, matchId, objId, targetId, res) {
 	cl("entered update Match 2User function");
 	// const collection = db.collection('users');
 	// collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}}
-	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "matches": {[matchId] : objId}}}, 
+	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, { $addToSet: { "matches": { [matchId]: objId } } },
 		(err, result) => {
-		if (err) {
-			cl("Couldnt insert match", err)
-			res.json(500, { error: 'Failed to add' })
-		} else {
-			cl("match added");
-			// res.json(MatchObj);
-		}
-	});
+			if (err) {
+				cl("Couldnt insert match", err)
+				res.json(500, { error: 'Failed to add' })
+			} else {
+				cl("match added");
+				// res.json(MatchObj);
+			}
+		});
 
 }
 
@@ -412,7 +453,7 @@ http.listen(3003, function () {
 	console.log(`PUT (update): \t\t ${baseUrl}/{entity}/{id}`);
 	console.log(`POST (add): \t\t ${baseUrl}/{entity}`);
 	console.log(`POST (login): \t\t ${serverRoot}{entity}`);
-	
+
 });
 
 
