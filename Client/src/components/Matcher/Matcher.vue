@@ -30,7 +30,7 @@ export default {
   methods: {
     changeProfile(isLiked) {
       // console.log(this.nextUser);
-      this.$store.commit('like', { targetId: this.nextUser._id, isLiked })
+      this.$store.dispatch('like', this.nextUser._id, isLiked)
     },
     showDetails(){
       this.isShowingDetails = !this.isShowingDetails;
