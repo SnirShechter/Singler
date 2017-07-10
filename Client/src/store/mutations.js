@@ -10,18 +10,22 @@ export default {
         state.matches = data.matches;
         state.filtermap = data.filtermap;
     },
-    addUsers(state,users) {
+    addUsers(state, users) {
         state.usersToShow.push(...users);
     },
     editProfile(state, profile) {
         state.profile = profile;
     },
     like(state, { targetId, isLiked }) {
-        state.likes[targetId] = { targetId: isLiked };
+        state.likes.push({ targetId: isLiked });
         state.usersToShow.splice(0, 1);
     },
+    unlike(state, targetId) {
+        let idx =state.likes.findIndex(like=> (Object.keys(like) === targetId));
+        state.likes.splice(idx, 1);
+    },
     match(state, match) {
-        state.matches[match._id] = match;
+        state.matches[match.targetId] = match;
     },
     unmatch(state, matchId) {
         delete state.matches[matchId];

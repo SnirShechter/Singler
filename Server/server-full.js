@@ -64,17 +64,19 @@ function dbConnect() {
 }
 
 // GETs a list
-app.get('/data/:objType', function (req, res) {
-	const objType = req.params.objType;
+app.get('/data/users/all/:id', function (req, res) {
+	const objType = 'users';
+	const userId = req.params.id;
+
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
-
 		collection.find({}).toArray((err, objs) => {
 			if (err) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
 			} else {
-				cl("Returning list of " + objs.length + " " + objType); // + "s");
+				cl("Returning list of " + objs.length + " " + objType);
+				objs = filterUserProfiles(objs, userId);
 				res.json(objs);
 			}
 			db.close();
@@ -176,38 +178,6 @@ app.get('/data/stam/matches/:id', function (req, res) {
 		});
 });
 
-// PUT - update like for user
-// app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
-// // app.put('/data/:objType/:id/:newUname', function (req, res) {
-// 	// const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	const targetId 	= req.params.trgId;
-// 	const isLike 	=  req.params.like;
-// 	// const newObj 	= req.body;
-// 	// const newUname 	=  req.params.newUname;
-// 	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
-
-// 	cl(`Requested to update the likes of id: ${objId}`);
-
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection('users');
-// 		collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}},
-// 			(err, result) => {
-// 				if (err) {
-// 					cl('Cannot Update', err)
-// 					res.json(500, { error: 'Update failed' })
-// 				} else {
-// 					// res.json(newObj);
-// 					if (isLike) {
-// 						check4Match(collection, objId, targetId, res);
-// 					}
-// 					cl('updated likes of: ', objId);
-// 				}
-// 				db.close();
-// 			});
-// 	});
-// });
-
 app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	const userId = req.params.id;
 	const likedUserId = req.params.trgId;
@@ -243,7 +213,6 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 			});
 	});
 });
-
 
 // DELETE
 // app.delete('/data/:objType/:id', function (req, res) {
@@ -301,8 +270,6 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 
 
 
-/////////////////////////////////////////////////////////////////////////
-// /data/chat/messages/
 // Add message
 app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
@@ -342,7 +309,7 @@ app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
 
-		collection.find({ toId: { $in: [ fromId, toId ] },fromId: { $in: [ toId, fromId ] }}).toArray((err, objs) => {
+		collection.find({ toId: { $in: [fromId, toId] }, fromId: { $in: [toId, fromId] } }).toArray((err, objs) => {
 			if (err) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
@@ -354,32 +321,6 @@ app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
 		});
 	});
 });
-
-/////////////////////////////////////////////////////////////////////////
-
-
-// PUT - updates
-// app.put('/data/:objType/:id', function (req, res) {
-// 	const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	const newObj 	= req.body;
-// 	if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
-
-// 	cl(`Requested to UPDATE the ${objType} with id: ${objId}`);
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection(objType);
-// 		collection.updateOne({ _id: new mongodb. (objId) }, newObj,
-// 			(err, result) => {
-// 				if (err) {
-// 					cl('Cannot Update', err)
-// 					res.json(500, { error: 'Update failed' })
-// 				} else {
-// 					res.json(newObj);
-// 				}
-// 				db.close();
-// 			});
-// 	});
-// });
 
 // Basic Login/Logout/Protected assets
 app.post('/login', function (req, res) {
@@ -454,16 +395,40 @@ io.on('connection', function (socket) {
 
 cl('WebSocket is Ready');
 
-// Some small time utility functions
+function filterUserProfiles(users, id) {
+	idx = users.findIndex(user => this._id === id);
+	// destructuring the filtermap + splicing its own user object
+	var { filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes, matches } = users.splice(idx, 1)
+	var filterFunction = like => {
+		let LikedUserIdx = findIndex(user => {
+			return user._id === Object.keys(like)[0]
+		})
+		users.splice(LikedUserIdx, 1);
+	}
 
+	// filtering out the likes and matches of the user
+	likes.map(filterFunction)
+	matches.map(filterFunction)
 
+	// filtering out the users not matching the filtermap criterias
+	userProfiles = userProfiles.filter(profile => {
+		let age = birthdateToAge(profile.birthdate);
 
+		// basicly a boolean representing the user NOT matching the criteria, so a ! is inserted before
+		return !(age > maxAge || age < minAge ||
+			profile.isMale && !malePref ||
+			!profile.isMale && !femalePref)
+	})
 
-// function cl(...params) {
-// 	console.log.apply(console, params);
-// }
+	// adjusting user data so that only a profile with an Id will return
+	var userProfiles = users.map(user => {
+		user.profile._id = user._id;
+		return user.profile;
+	})
 
-// Just for basic testing the socket
-// app.get('/', function(req, res){
-//   res.sendFile(__dirname + '/test-socket.html');
-// });
+	return userProfiles;
+}
+
+function birthdateToAge(birthdate) {
+	return (Date.now() - profile.birthdate) / (1000 * 60 * 60 * 24 * 365)
+}

@@ -32,8 +32,9 @@ export default {
   },
   methods: {
     changeProfile(isLiked) {
+      console.log(isLiked)
       if (this.$store.state.usersToShow.length < 5) this.$store.dispatch('getUsersToShow');
-      this.$store.dispatch('like', this.nextUser._id, isLiked)
+      this.$store.dispatch('like', {targetId:this.nextUser._id, isLiked})
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;

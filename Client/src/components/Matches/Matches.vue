@@ -3,7 +3,7 @@
     <ul v-if="isInChat">
       <chat-preview v-for="currMatch in matches" :match="currMatch" :key="currMatch.id" @click.native="selectMatch(currMatch)"></chat-preview>
     </ul>
-    <component v-else  :matchId="selected" @toggleChat="toggleChat" :is="chatName"></component>
+    <component v-else :matchId="selected" @toggleChat="toggleChat" :is="chatName"></component>
   </section>
 </template>
 
@@ -16,14 +16,14 @@ export default {
     return {
       selected: null,
       chatName: 'chat',
-       isInChat: true,
+      isInChat: true,
     }
 
   },
   methods: {
     selectMatch(currMatch) {
       // this.$router.push('/chat/'+currMatch._Id)
-      console.log('selceting match : ', currMatch._Id)
+      console.log('selecting match : ', currMatch._Id)
       this.selected = currMatch._Id;
       this.isInChat = !this.isInChat;
     },
