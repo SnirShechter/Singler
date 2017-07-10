@@ -1,6 +1,6 @@
 <template>
     <section class="login" @keyup="keymonitor">
-        </el-alert>
+    <section class="login">
         <h1>
             <span class="theme"> Singler </span>
         </h1>
@@ -8,7 +8,7 @@
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
         <el-button class="sign-in" type="primary" @click="login">Log in</el-button>
         <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
-    
+        <el-button class="sign-in facebook" type="primary" @click="sendMsg">Send dummy msg</el-button>
         <p>Don't have an account yet?
             <router-link to="/register"> Register now! </router-link>
         </p>
@@ -57,6 +57,11 @@ export default {
         },
         goToMatcherScreen() {
             if(this.$store.state.toMatcher) this.$router.push('matcher');
+            console.log(this.username, this.password);
+            this.$store.dispatch('login', { uName: this.username, password: this.password })
+        },
+        sendMsg() {
+            this.$store.dispatch('sendMsg')
         }
     }
 }

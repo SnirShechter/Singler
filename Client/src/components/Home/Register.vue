@@ -51,7 +51,7 @@
       </el-radio-group>
     </div>
     <el-button type="primary" @click="submit">Submit</el-button>
-    <el-button type="primary" @click="cl">Console</el-button>
+    <!--<el-button type="primary" @click="cl">Console</el-button>-->
   </section>
 </template>
 
@@ -108,6 +108,7 @@ export default {
           fName: this.profile.fName,
           lName: this.profile.lName,
           birthdate: this.profile.birthdate,
+          imgUrl: '',
           isMale: this.profile.isMale,
           interests: this.profile.interests,
           desc: this.profile.desc
@@ -121,8 +122,7 @@ export default {
       }
       console.log(user); // <----------- CONSOLE.LOG
       if (this.prefs.repeatPassword === user.password) {
-        this.$store.dispatch('register',user);
-        this.$router.push('matcher');
+        this.$store.dispatch('register', user)
       }
       else
         this.$notify.error({

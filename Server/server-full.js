@@ -67,7 +67,6 @@ function dbConnect() {
 app.get('/data/users/all/:id', function (req, res) {
 	const objType = 'users';
 	const userId = req.params.id;
-
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
 		collection.find({}).toArray((err, objs) => {
@@ -75,8 +74,9 @@ app.get('/data/users/all/:id', function (req, res) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
 			} else {
-				cl("Returning list of " + objs.length + " " + objType);
 				objs = filterUserProfiles(objs, userId);
+				if (typeof objs !== 'string') cl("Returning list of " + objs.length + " " + objType);
+				else cl('something went wrong. error: ' + objs)
 				res.json(objs);
 			}
 			db.close();
@@ -114,15 +114,13 @@ app.get('/data/:objType/:id', function (req, res) {
 		});
 });
 
-
-// GETs a match by "match Id"
-// app.get('/data/matches/:mid', function (req, res) {
-// 	const objType = req.params.objType;
+// GET matches per user
+// app.get('/data/stam/matches/:id', function (req, res) {
 // 	const objId = req.params.id;
-// 	cl(`Getting you an ${objType} with id: ${objId}`);
+// 	cl(`Getting you the matches for user id: ${objId}`);
 // 	dbConnect()
 // 		.then((db) => {
-// 			const collection = db.collection(objType);
+// 			const collection = db.collection('users');
 // 			let _id;
 // 			try {
 // 				_id = new mongodb.ObjectID(objId);
@@ -132,51 +130,18 @@ app.get('/data/:objType/:id', function (req, res) {
 // 			}
 // 			return collection.findOne({ _id: _id })
 // 				.then((obj) => {
-// 					cl("Returning a single item from " + objType);
-// 					res.json(obj);
-// 					db.close();	
+// 					cl("Returning the matches for " + objId);
+// 					res.json(obj.matches);
+// 					db.close();
 // 				})
 // 				.catch(err => {
 // 					cl('Cannot get you that ', err)
-// 					res.json(404, { error: 'not found' })
-// 					db.close();	
+// 					res.status(404).json({ error: 'not found' });
+// 					db.close();
 // 				})
 
 // 		});
 // });
-
-// GET matches per user
-// app.get('/data/:objType/:id', function (req, res) {
-app.get('/data/stam/matches/:id', function (req, res) {
-	// const objType = req.params.objType;
-	const objId = req.params.id;
-	cl(`Getting you the matches for user id: ${objId}`);
-	// cl('aaajbiuasbsiuafiuafuifaffff... Taly....');
-	dbConnect()
-		.then((db) => {
-			const collection = db.collection('users');
-			let _id;
-			try {
-				_id = new mongodb.ObjectID(objId);
-			}
-			catch (e) {
-				return Promise.reject(e);
-			}
-			return collection.findOne({ _id: _id })
-				.then((obj) => {
-					cl("Returning the matches for " + objId);
-					res.json(obj.matches);
-					db.close();
-				})
-				.catch(err => {
-					cl('Cannot get you that ', err)
-					// res.json(404, { error: 'not found' })
-					res.status(404).json({ error: 'not found' });
-					db.close();
-				})
-
-		});
-});
 
 app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	const userId = req.params.id;
@@ -194,17 +159,17 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 				// return check4Match(collection, objId, targetId, res);
 				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
 			}).then((matchResult) => { //update match
-				cl('got like checking match');
 				if (matchResult) { //found match
-					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": { [likedUserId]: true } } })
+					cl('Found a match!');
+					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": likedUserId } })
 						.then(() => {
-							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": { [userId]: true } } });
+							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": userId } });
 						})
 						.then(() => {
 							db.close();
+							res.json({ message: 'Updated like and found a match!', isMatch: true })
 						});
-				}
-				res.json({ messege: 'updated' });
+				} else res.json({ message: 'Updated like', isMatch: false });
 			})
 			.catch(err => {
 				cl('Cannot get you that ', err)
@@ -214,54 +179,29 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	});
 });
 
-// DELETE
-// app.delete('/data/:objType/:id', function (req, res) {
-// 	const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	cl(`Requested to DELETE the ${objType} with id: ${objId}`);
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection(objType);
-// 		collection.deleteOne({ _id: new mongodb.ObjectID(objId) }, (err, result) => {
-// 			if (err) {
-// 				cl('Cannot Delete', err)
-// 				res.json(500, { error: 'Delete failed' })
-// 			} else {
-// 				cl("Deleted", result);
-// 				res.json({});
-// 			}
-// 			db.close();
-// 		});
-
-// 	});
-// });
-
-// POST - adds user
+// POST - adds a user
 app.post('/data/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
 	cl("POST for " + objType);
 
-	const obj = req.body;
-	obj.likes = []
-	obj.matches = [];
-
-	// delete obj._id;
+	const user = req.body;
+	user.likes = []
+	user.matches = [];
 
 	// If there is a file upload, add the url to the obj
 	if (req.file) {
-		obj.imgUrl = serverRoot + req.file.filename;
+		user.imgUrl = serverRoot + req.file.filename;
 	}
-
-
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 
-		collection.insert(obj, (err, result) => {
+		collection.insert(user, (err, result) => {
 			if (err) {
 				cl(`Couldnt insert a new ${objType}`, err)
 				res.json(500, { error: 'Failed to add' })
 			} else {
 				cl(objType + " added");
-				res.json(obj);
+				res.json(user);
 			}
 			db.close();
 		});
@@ -330,13 +270,14 @@ app.post('/login', function (req, res) {
 			if (user) {
 				cl('Login Succesful');
 				delete user.password;
-				req.session.user = user;  //refresh the session value
-				// res.json({ token: 'Beareloginr: puk115th@b@5t', user });
-				res.json(user);
+				buildClientMatches(user.matches)
+					.then((userProfiles) => {
+						user.matches = userProfiles;
+						res.json(user)
+					});
 			} else {
 				cl('Login NOT Succesful');
 				req.session.user = null;
-				// res.json(403, { error: 'Login failed' })
 				res.status(403).json({ error: 'Login failed' })
 			}
 			db.close();
@@ -381,29 +322,48 @@ http.listen(3003, function () {
 
 });
 
-
-io.on('connection', function (socket) {
+var connections = [];
+io.on('connection', socket => {
 	console.log('a user connected');
+	socket.on('identify', userId => {
+		connections.push({ socketId: socket.id, userId })
+		console.log(`identified socket connection as: ${userId}`);
+		console.log(connections)
+	})
 	socket.on('disconnect', function () {
-		console.log('user disconnected');
+		console.log('user disconnected')
+		let idx = connections.findIndex(connection => socket.id === connection.socketId)
+		if (idx !== -1) {
+			console.log(`id: ${connections[idx].socketId}`);
+			connections.splice(idx, 1)
+		}
 	});
-	socket.on('chat message', function (msg) {
-		// console.log('message: ' + msg);
-		io.emit('chat message', msg);
-	});
+	socket.on('message', msg => {
+		let connectionTarget = connections.find(connection => {
+			return msg.to === connection.userId
+		})
+		console.log('connection target:')
+		console.log(connectionTarget)
+		io.to(connectionTarget.socketId).send(msg);
+	})
 });
 
-cl('WebSocket is Ready');
+// socket.on('chat message', function (msg) {
+// 	console.log('message: ' + msg);
+// 	io.emit('chat message', msg);
+// });
 
 function filterUserProfiles(users, id) {
 	var idx = users.findIndex(user => {
+		console.log(user._id)
 		return user._id == id
 	});
-	console.log(idx);
-	console.log(id);
-	console.log(users[idx])
+	if (idx === -1) {
+		console.log(idx)
+		console.log(id)
+		return 'Recieved an invalid ID'
+	}
 	// destructuring the filtermap + splicing its own user object
-	// console.log(users.splice(idx, 1).matches);
 	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes } = users[idx];
 	users.splice(idx, 1);
 
@@ -440,4 +400,50 @@ function filterUserProfiles(users, id) {
 
 function birthdateToAge(birthdate) {
 	return (Date.now() - birthdate) / (1000 * 60 * 60 * 24 * 365)
+}
+
+function buildClientMatches(ServerMatches) {
+	console.log(`building client matches with matches:`);
+	console.log(ServerMatches);
+
+	if (ServerMatches.length == 0) return [];
+	return new Promise((resolve, reject) => {
+		getSomeUsers(ServerMatches)
+			.then((users) => {
+				console.log(`before map IDs : ` + users);
+				let userProfiles = users.map(user => {
+					user.profile._id = user._id;
+					return user.profile;
+				})
+				console.log('RESOLVING PROMISE')
+				console.log(userProfiles);
+				resolve(userProfiles);
+			})
+			.catch((err) => console.log(err));
+	})
+}
+
+function getSomeUsers(userIds) {
+	console.log('userIds on getSomeUsers ' + userIds)
+	console.log('type of ' + typeof userIds)
+	let mongodbUserIds = userIds.map(userId => new mongodb.ObjectID(userId))
+	console.log(mongodbUserIds)
+	return new Promise((resolve, reject) => {
+		dbConnect().then(db => {
+			const collection = db.collection('users');
+			console.log('getsomeusers inside dbconnect' + userIds)
+			collection.find({ _id: { $in: mongodbUserIds } }).toArray((err, users) => {
+				console.log('getsomeusers inside coll find' + users)
+				if (err) {
+					cl('Cannot get you the users you requested. error: ', err)
+					reject(err);
+				} else {
+					console.log('getsomeusers before return users :')
+					console.log(users);
+					db.close();
+					resolve(users);
+				}
+			});
+		})
+	});
 }

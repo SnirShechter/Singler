@@ -1,7 +1,7 @@
 <template>
     <section class="matches">
         <li>
-            <img class="profile" :src="match.matchedProfile.imgUrl">
+            <!--<img class="profile" :src="match.matchedProfile.imgUrl">-->
     
             <div class="msg-details">
                 <p>
@@ -20,7 +20,7 @@
 <script>
 import moment from 'moment'
 export default {
-    name: 'Matches',
+    name: 'chatPreview',
     props: ['match'],
     data() {
         return {

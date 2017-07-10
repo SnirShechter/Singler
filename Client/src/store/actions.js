@@ -1,4 +1,8 @@
 import axios from 'axios';
+import io from 'socket.io-client'
+import router from '../router'
+
+var socket = io('http://localhost:3003');
 
 const SERVER_URL = 'http://localhost:3003';
 export default {
@@ -7,10 +11,13 @@ export default {
       .then((res) => {
         context.commit('login', res.data)
       })
+      .then(() => {
+        router.push('matcher');
+        context.dispatch('getUsersToShow', context.state._id);
+      })
       .catch((error) => {
         console.log(error);
         console.log('SOMETHING WENT TERRIBLY BAD')
-        //  context.commit('login', res.data)
       })
   },
   login(context, { uName, password }) {
@@ -21,7 +28,15 @@ export default {
         context.commit('login', res.data);
         context.commit('goToMatcher', true);
         context.dispatch('getUsersToShow');
+        socket.emit('identify', res.data._id)
+        socket.on('message', msg => {
+          console.log(msg);
+        })
       })
+      .then(() => {
+        context.dispatch('getUsersToShow', context.state._id)
+      }
+      )
       .catch((error) => {
         // console.log(error); // <-- console.log
         // console.log('SOMETHING WENT TERRIBLY BAD')
@@ -31,7 +46,7 @@ export default {
       })
   },
   editProfile(context, profile) {
-    axios.put(`${SERVER_URL}/users/` + state._id, profile)
+    axios.put(`${SERVER_URL}/users/` + context.state._id, profile)
       .then((res) => {
         context.commit('editProfile', profile)
       })
@@ -40,8 +55,19 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
-  getUsersToShow(context) {
-    axios.get(`${SERVER_URL}/data/users/all/${context.state._id}`)
+    editFilterMatch(context, filterMatch) {
+    axios.put(`${SERVER_URL}/users/` + context.state._id, filterMatch)
+      .then((res) => {
+        context.commit('editFilterMatch', filterMatch)
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log('SOMETHING WENT TERRIBLY BAD')
+      })
+  },
+  getUsersToShow(context, id) {
+    console.log('getting users to show with id ' + id)
+    axios.get(`${SERVER_URL}/data/users/all/${id}`)
       .then((res) => {
         console.log(res.data);
         context.commit('addUsers', res.data)
@@ -55,9 +81,10 @@ export default {
     context.commit('like', { targetId, isLiked });
     axios.put(`${SERVER_URL}/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
+        console.log(res.data.message)
         console.log('LIKED, res: ' + res);
         if (res.data.isMatch) {
-          context.dispatch('match', targetId, this.$store.getters.nextUser.profile);
+          context.dispatch('match', targetId, context.getters.nextUser.profile);
         }
       })
       .catch((error) => {
@@ -69,7 +96,7 @@ export default {
   match(context, targetId, targetProfile) {
     var match = { targetId, targetProfile, msgs: [] };
     context.commit('match', match);
-    this.$message('You have a new match!!!');
+    console.log('You have a new match!!!');
   },
   unmatch(context, matchId) {
     axios.delete('/matches/' + matchId)
@@ -77,5 +104,9 @@ export default {
         console.log(res.data);
         context.commit('unmatch', matchId);
       })
+  },
+  sendMsg(context) {
+    let msg = { from: context.state._id, to: '596319ad35fed710706f2127', txt: 'did you get the msg?' }
+    socket.send(msg);
   }
 };

@@ -5,44 +5,71 @@
     </h1>
     <img src="../../assets/profile.png"></img>
     <div class="details">
-      <div class="editMode">
+      <div v-if="presentMode" class="editMode">
         <span class="theme">First Name</span>
-        <p v-if="presentMode">{{$store.state.profile.fName}}</p>
-        <el-input v-else v-model="fName"></el-input>
+        {{$store.state.profile.fName}}
       </div>
-      <div class="editMode">
+      <div v-else class="editMode">
+        <span class="theme">First Name</span>
+        <el-input v-model="profile.fName"></el-input>
+      </div>
+  
+      <div v-if="presentMode" class="editMode">
         <span class="theme">Last Name</span>
-        <p v-if="presentMode">{{$store.state.profile.lName}}</p>
-        <el-input v-else v-model="lName">
+        {{$store.state.profile.lName}}
+      </div>
+      <div v-else class="editMode">
+        <span class="theme">Last Name</span>
+        <el-input v-model="profile.lName">
         </el-input>
       </div>
-      <div class="editMode">
+  
+      <div v-if="presentMode" class="editMode">
         <span class="theme">Birthdate</span>
-        <p v-if="presentMode">{{$store.getters.myAge}}</p>
-        <el-date-picker v-else v-model="birthdate" type="date" class="date-picker input-model" placeholder="Birthday"> </el-date-picker>
+        {{datePresent}}
+        </el-date-picker>
       </div>
-      <div class="editMode">
+  
+      <div v-else class="editMode">
+        <span class="theme">Birthdate</span>
+        <el-date-picker v-model="profile.birthdate" type="date" class="date-picker input-model" placeholder="Birthday"> </el-date-picker>
+      </div>
+  
+      <div v-if="presentMode" class="editMode">
         <span class="theme">Gender</span>
-        <p v-if="presentMode">{{$store.getters.myGender}}</p>
-        <el-radio-group v-else v-model="isMale">
+        {{$store.getters.myGender}}
+      </div>
+      <div v-else class="editMode">
+        <span class="theme">Gender</span>
+        <el-radio-group v-model="profile.isMale">
           <el-radio class="radio" :label="true">male</el-radio>
           <el-radio class="radio" :label="false">female</el-radio>
         </el-radio-group>
       </div>
-      <div class="editMode">
+  
+      <div class="editMode" v-if="presentMode">
         <span class="theme">Interests</span>
-        <p v-if="presentMode">{{$store.state.profile.interests}}</p>
-        <el-input v-else v-model="interests"></el-input>
+        {{$store.state.profile.interests}}
       </div>
-      <div class="editMode">
-        <p>
-          <span class="theme">Description</span>
-          <p v-if="presentMode">{{$store.state.profile.desc}} </p>
-          <el-input v-else v-model="desc"></el-input>
+      <div class="editMode" v-else>
+        <span class="theme">Interests</span>
+        <el-input v-model="profile.interests"></el-input>
       </div>
-      <div v-if="presentMode" class="btns">
-        <el-button @click="editProfile" type="primary"> ✎ Edit</el-button>
-        <el-button @click="commitChange" type="primary"> ⚙ Settings</el-button>
+  
+      <div class="editMode" v-if="presentMode">
+        <span class="theme">Description</span>
+        {{$store.state.profile.desc}}
+      </div>
+  
+      <div class="editMode" v-else>
+        <span class="theme">Description</span>
+  
+        <el-input v-model="profile.desc"></el-input>
+      </div>
+  
+       <div v-if="presentMode" class="btns">
+        <el-button @click="editProfile" type="primary"> <i class="el-icon-edit"></i> Edit</el-button>
+        <el-button @click="goToSettings" type="primary"> <i class="el-icon-setting"></i> Settings</el-button>
       </div>
       <div v-else class="btns">
         <el-button @click="commitChange" type="primary"> Save</el-button>
@@ -53,17 +80,24 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'MyProfile',
+  created() {
+    console.log(Date.parse(this.$store.state.profile.birthdate))
+  },
   data() {
     return {
-      presentMode: false,
-      fName: this.$store.state.profile.fName,
-      lName: this.$store.state.profile.lName,
-      interests: this.$store.state.profile.interests,
-      desc: this.$store.state.profile.desc,
-      birthdate: this.$store.state.profile.birthdate,
-      isMale: this.$store.state.profile.isMale
+      presentMode: true,
+      datePresent: moment(this.$store.state.profile.birthdate).format('L'),
+      profile: {
+        fName: this.$store.state.profile.fName,
+        lName: this.$store.state.profile.lName,
+        interests: this.$store.state.profile.interests,
+        desc: this.$store.state.profile.desc,
+        birthdate: this.$store.state.profile.birthdate,
+        isMale: this.$store.state.profile.isMale
+      }
     }
   }
   , methods: {
@@ -73,16 +107,21 @@ export default {
       //   message: 'This is a success message',
       //   type: 'success'
       // });
+     // this.$router.push('/myprofile/edit')  
       this.presentMode = !this.presentMode
     },
     commitChange() {
-      this.presentMode = !this.presentMode
-
+      this.presentMode = !this.presentMode,
+      console.log(this.profile);
+      this.$store.dispatch('editFilterMatch', { filterMatch: filterMatch });
     },
     cancel() {
       this.presentMode = !this.presentMode
-
+    },
+    goToSettings(){
+          this.$router.push('/myprofile/settings')  
     }
+
   }
 }
 </script>
@@ -101,6 +140,13 @@ export default {
     flex-flow: row nowrap;
     text-justify: space-between;
     margin: 1em;
+  }
+  .theme {
+    margin-right: 1em;
+    padding: 0;
+  }
+  p {
+    display: inline;
   }
 }
 </style>

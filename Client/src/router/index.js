@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import home from '@/components/Home/Home'
 import myProfile from '@/components/MyProfile/MyProfile'
+import settings from '@/components/MyProfile/Settings'
 import register from '@/components/Home/Register'
 import matcher from '@/components/Matcher/Matcher'
 import matches from '@/components/Matches/Matches'
@@ -49,6 +50,10 @@ export default new Router({
       path: '/chat/:id',
       name: 'Chat',
       component: chat
+    },
+    { path: '/myprofile/settings',
+      settings: 'Settings',
+      component: settings
     }
   ],
   mode: 'history'

@@ -18,7 +18,6 @@
 export default {
   name: 'matcher',
   created() {
-    this.$store.dispatch('getUsersToShow');
   },
   data() {
     return {
@@ -33,8 +32,8 @@ export default {
   methods: {
     changeProfile(isLiked) {
       console.log(isLiked)
-      if (this.$store.state.usersToShow.length < 5) this.$store.dispatch('getUsersToShow');
-      this.$store.dispatch('like', {targetId:this.nextUser._id, isLiked})
+      if (this.$store.state.usersToShow.length < 5) this.$store.dispatch('getUsersToShow', this.$store.state._id);
+      this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;
