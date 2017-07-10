@@ -16,6 +16,9 @@ export default {
     editProfile(state, profile) {
         state.profile = profile;
     },
+    editFilterMatch(state, filterMatch) {
+        state.filterMatch = filterMatch;
+    },
     like(state, { targetId, isLiked }) {
         state.likes.push({ targetId: isLiked });
         state.usersToShow.splice(0, 1);

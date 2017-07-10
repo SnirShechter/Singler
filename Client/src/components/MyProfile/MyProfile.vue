@@ -113,7 +113,7 @@ export default {
     commitChange() {
       this.presentMode = !this.presentMode,
       console.log(this.profile);
-      this.$store.dispatch('editProfile', { profile: this.profile });
+      this.$store.dispatch('editFilterMatch', { filterMatch: filterMatch });
     },
     cancel() {
       this.presentMode = !this.presentMode
