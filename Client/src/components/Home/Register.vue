@@ -121,8 +121,7 @@ export default {
       }
       console.log(user); // <----------- CONSOLE.LOG
       if (this.prefs.repeatPassword === user.password) {
-        this.$store.dispatch('register',user);
-        this.$router.push('matcher');
+        this.$store.dispatch('register', user)
       }
       else
         this.$notify.error({

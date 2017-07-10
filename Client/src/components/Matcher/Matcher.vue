@@ -18,6 +18,8 @@
 export default {
   name: 'matcher',
   created() {
+    console.log('requesting users on matcher')
+    console.log(this.$store.state._id)
     this.$store.dispatch('getUsersToShow');
   },
   data() {
@@ -34,7 +36,7 @@ export default {
     changeProfile(isLiked) {
       console.log(isLiked)
       if (this.$store.state.usersToShow.length < 5) this.$store.dispatch('getUsersToShow');
-      this.$store.dispatch('like', {targetId:this.nextUser._id, isLiked})
+      this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;

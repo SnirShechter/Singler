@@ -21,7 +21,7 @@ export default {
         state.usersToShow.splice(0, 1);
     },
     unlike(state, targetId) {
-        let idx =state.likes.findIndex(like=> (Object.keys(like) === targetId));
+        let idx = state.likes.findIndex(like => (Object.keys(like) === targetId));
         state.likes.splice(idx, 1);
     },
     match(state, match) {
