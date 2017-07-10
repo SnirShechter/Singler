@@ -20,7 +20,7 @@
 <script>
 import moment from 'moment'
 export default {
-    name: 'Matches',
+    name: 'chatPreview',
     props: ['match'],
     data() {
         return {

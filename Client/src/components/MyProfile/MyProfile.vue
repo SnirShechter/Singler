@@ -26,7 +26,7 @@
   
       <div v-if="presentMode" class="editMode">
         <span class="theme">Birthdate</span>
-        {{$store.getters.myAge}}
+        {{datePresent}}
         </el-date-picker>
       </div>
   
@@ -51,7 +51,7 @@
         <span class="theme">Interests</span>
         {{$store.state.profile.interests}}
       </div>
-      <div v-else class="editMode">
+      <div class="editMode" v-else>
         <span class="theme">Interests</span>
         <el-input v-model="profile.interests"></el-input>
       </div>
@@ -67,9 +67,9 @@
         <el-input v-model="profile.desc"></el-input>
       </div>
   
-      <div v-if="presentMode" class="btns">
-        <el-button @click="editProfile" type="primary"> ✎ Edit</el-button>
-        <el-button @click="commitChange" type="primary"> ⚙ Settings</el-button>
+       <div v-if="presentMode" class="btns">
+        <el-button @click="editProfile" type="primary"> <i class="el-icon-edit"></i> Edit</el-button>
+        <el-button @click="goToSettings" type="primary"> <i class="el-icon-setting"></i> Settings</el-button>
       </div>
       <div v-else class="btns">
         <el-button @click="commitChange" type="primary"> Save</el-button>
@@ -80,11 +80,16 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'MyProfile',
+  created() {
+    console.log(Date.parse(this.$store.state.profile.birthdate))
+  },
   data() {
     return {
       presentMode: true,
+      datePresent: moment(this.$store.state.profile.birthdate).format('L'),
       profile: {
         fName: this.$store.state.profile.fName,
         lName: this.$store.state.profile.lName,
@@ -102,18 +107,20 @@ export default {
       //   message: 'This is a success message',
       //   type: 'success'
       // });
+     // this.$router.push('/myprofile/edit')  
       this.presentMode = !this.presentMode
     },
     commitChange() {
       this.presentMode = !this.presentMode,
-
-        console.log(this.profile);
+      console.log(this.profile);
       this.$store.dispatch('editProfile', { profile: this.profile });
     },
     cancel() {
       this.presentMode = !this.presentMode
-
     },
+    goToSettings(){
+          this.$router.push('/myprofile/settings')  
+    }
 
   }
 }

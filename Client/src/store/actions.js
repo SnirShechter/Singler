@@ -41,7 +41,7 @@ export default {
       })
   },
   editProfile(context, profile) {
-    axios.put(`${SERVER_URL}/users/` + state._id, profile)
+    axios.put(`${SERVER_URL}/users/` + context.state._id, profile)
       .then((res) => {
         context.commit('editProfile', profile)
       })
