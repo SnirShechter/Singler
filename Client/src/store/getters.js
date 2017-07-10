@@ -16,8 +16,10 @@ export default {
     },
     nextUserAge(state, getters) {
         if (!state.usersToShow[0]) return 'Nothing to show!'
-        var ageInMilliseconds = (Date.now() - getters.nextUser.birthdate);
+        var ageInMilliseconds = (Date.now() - new Date(getters.nextUser.birthdate).getTime());
+        console.log(ageInMilliseconds);
         var age = ageInMilliseconds / (1000 * 60 * 60 * 24 * 365);
+        console.log(age);
         return age.toFixed(1);
     },
     getMatches(state, getters) {
