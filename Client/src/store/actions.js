@@ -35,27 +35,28 @@ export default {
       })
   },
   getUsersToShow(context) {
-    axios.get(`${SERVER_URL}/data/users`)
+    axios.get(`${SERVER_URL}/data/users/all/${context.state._id}`)
       .then((res) => {
         console.log(res.data);
         context.commit('addUsers', res.data)
       })
   },
-  like(context, {targetId, isLiked}) {
+  like(context, { targetId, isLiked }) {
     console.log(context.state)
     console.log(isLiked);
     isLiked = isLiked ? 'like' : 'not';
     console.log(isLiked);
-    axios.put(`http://localhost:3003/data/users/${context.state._id}/${targetId}/${isLiked}`)
+    context.commit('like', { targetId, isLiked });
+    axios.put(`${SERVER_URL}/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
         console.log('LIKED, res: ' + res);
         if (res.data.isMatch) {
           context.dispatch('match', targetId, this.$store.getters.nextUser.profile);
         }
-        context.commit('like', { targetId, isLiked });
       })
       .catch((error) => {
         console.log(error);
+        context.commit('unlike', targetId);
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },

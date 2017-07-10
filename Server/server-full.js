@@ -76,11 +76,7 @@ app.get('/data/users/all/:id', function (req, res) {
 				res.json(404, { error: 'not found' })
 			} else {
 				cl("Returning list of " + objs.length + " " + objType);
-				objs = objs.map(obj => {
-					obj.profile._id = obj._id;
-					return obj.profile;
-				})
-				filterUserProfiles(objs, userId);
+				objs = filterUserProfiles(objs, userId);
 				res.json(objs);
 			}
 			db.close();
