@@ -51,7 +51,7 @@
       </el-radio-group>
     </div>
     <el-button type="primary" @click="submit">Submit</el-button>
-    <el-button type="primary" @click="cl">Console</el-button>
+    <!--<el-button type="primary" @click="cl">Console</el-button>-->
   </section>
 </template>
 
@@ -80,7 +80,7 @@ export default {
       filtermap: {
         female: false,
         male: false,
-        ageRange: [18, 120]
+        ageRange: [this.$store.state.filtermap.minAge, this.$store.state.filtermap.maxAge]
       }
     }
   },
