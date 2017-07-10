@@ -19,12 +19,14 @@ export default {
       .then((res) => {
         console.log(res.data); // <-- console.log
         context.commit('login', res.data);
+        context.commit('goToMatcher', true);
         context.dispatch('getUsersToShow');
       })
       .catch((error) => {
         // console.log(error); // <-- console.log
         // console.log('SOMETHING WENT TERRIBLY BAD')
         context.commit('setError');
+        context.commit('goToMatcher', false);
         console.log('cannot login, please register!');
       })
   },

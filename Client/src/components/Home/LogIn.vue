@@ -1,12 +1,12 @@
 <template>
-    <section class="login">
+    <section class="login" @keyup="keymonitor">
         </el-alert>
         <h1>
             <span class="theme"> Singler </span>
         </h1>
         <el-input class="sign-in" type="text" placeholder="Username" v-model="username"></el-input>
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
-        <el-button class="sign-in" type="primary" @click.enter="login">Log in</el-button>
+        <el-button class="sign-in" type="primary" @click="login">Log in</el-button>
         <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
     
         <p>Don't have an account yet?
@@ -29,11 +29,23 @@ export default {
         login() {
             console.log("inserted username: ", this.username, "inserted password: ", this.password);
             this.$store.dispatch('login', { uName: this.username, password: this.password })
+        },
+        keymonitor(event) {
+            // console.log(event.key);
+            if(event.key === "Enter")
+            {
+                console.log("enter key was pressed!");
+                // console.log('the id of the input was: ' + event.currentTarget.id);
+                this.login();
+            }
         }
     }, 
     computed: {
         showErrorIfNotReg() {
             return this.$store.state.numUnRegLogin;
+        },
+        goToMatcherScreen() {
+            return this.$store.state.toMatcher;
         }
     },
     watch: {
@@ -42,6 +54,9 @@ export default {
                 title: 'Error',
                 message: 'Cannot login, please register!!!'
             })
+        },
+        goToMatcherScreen() {
+            if(this.$store.state.toMatcher) this.$router.push('matcher');
         }
     }
 }

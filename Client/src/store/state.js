@@ -26,6 +26,7 @@ const usersToShow = [];
 
 // in order to know when unregistered user tried to login
 var numUnRegLogin = 0;
+var toMatcher = false;
 
 const state = {
     _id,
@@ -35,7 +36,8 @@ const state = {
     matches,
     filtermap,
     usersToShow,
-    numUnRegLogin
+    numUnRegLogin,
+    toMatcher
 }
 
 export default state

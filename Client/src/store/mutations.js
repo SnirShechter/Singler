@@ -37,7 +37,9 @@ export default {
     },
     setError (state) {
         state.numUnRegLogin++;
-        console.log('in mutation: ', state.numUnRegLogin);
+    },
+    goToMatcher (state, val) {
+        state.toMatcher = val;
     }
 }
 
