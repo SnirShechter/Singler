@@ -115,37 +115,33 @@ app.get('/data/:objType/:id', function (req, res) {
 });
 
 // GET matches per user
-// app.get('/data/:objType/:id', function (req, res) {
-app.get('/data/stam/matches/:id', function (req, res) {
-	// const objType = req.params.objType;
-	const objId = req.params.id;
-	cl(`Getting you the matches for user id: ${objId}`);
-	// cl('aaajbiuasbsiuafiuafuifaffff... Taly....');
-	dbConnect()
-		.then((db) => {
-			const collection = db.collection('users');
-			let _id;
-			try {
-				_id = new mongodb.ObjectID(objId);
-			}
-			catch (e) {
-				return Promise.reject(e);
-			}
-			return collection.findOne({ _id: _id })
-				.then((obj) => {
-					cl("Returning the matches for " + objId);
-					res.json(obj.matches);
-					db.close();
-				})
-				.catch(err => {
-					cl('Cannot get you that ', err)
-					// res.json(404, { error: 'not found' })
-					res.status(404).json({ error: 'not found' });
-					db.close();
-				})
+// app.get('/data/stam/matches/:id', function (req, res) {
+// 	const objId = req.params.id;
+// 	cl(`Getting you the matches for user id: ${objId}`);
+// 	dbConnect()
+// 		.then((db) => {
+// 			const collection = db.collection('users');
+// 			let _id;
+// 			try {
+// 				_id = new mongodb.ObjectID(objId);
+// 			}
+// 			catch (e) {
+// 				return Promise.reject(e);
+// 			}
+// 			return collection.findOne({ _id: _id })
+// 				.then((obj) => {
+// 					cl("Returning the matches for " + objId);
+// 					res.json(obj.matches);
+// 					db.close();
+// 				})
+// 				.catch(err => {
+// 					cl('Cannot get you that ', err)
+// 					res.status(404).json({ error: 'not found' });
+// 					db.close();
+// 				})
 
-		});
-});
+// 		});
+// });
 
 app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	const userId = req.params.id;
@@ -165,9 +161,9 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 			}).then((matchResult) => { //update match
 				if (matchResult) { //found match
 					cl('Found a match!');
-					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": { [likedUserId]: true } } })
+					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": likedUserId } })
 						.then(() => {
-							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": { [userId]: true } } });
+							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": userId } });
 						})
 						.then(() => {
 							db.close();
@@ -183,29 +179,29 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	});
 });
 
-// POST - adds user
+// POST - adds a user
 app.post('/data/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
 	cl("POST for " + objType);
 
-	const obj = req.body;
-	obj.likes = []
-	obj.matches = [];
+	const user = req.body;
+	user.likes = []
+	user.matches = [];
 
 	// If there is a file upload, add the url to the obj
 	if (req.file) {
-		obj.imgUrl = serverRoot + req.file.filename;
+		user.imgUrl = serverRoot + req.file.filename;
 	}
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 
-		collection.insert(obj, (err, result) => {
+		collection.insert(user, (err, result) => {
 			if (err) {
 				cl(`Couldnt insert a new ${objType}`, err)
 				res.json(500, { error: 'Failed to add' })
 			} else {
 				cl(objType + " added");
-				res.json(obj);
+				res.json(user);
 			}
 			db.close();
 		});
@@ -274,13 +270,14 @@ app.post('/login', function (req, res) {
 			if (user) {
 				cl('Login Succesful');
 				delete user.password;
-				req.session.user = user;  //refresh the session value
-				// res.json({ token: 'Beareloginr: puk115th@b@5t', user });
-				res.json(user);
+				buildClientMatches(user.matches)
+					.then((userProfiles) => {
+						user.matches = userProfiles;
+						res.json(user)
+					});
 			} else {
 				cl('Login NOT Succesful');
 				req.session.user = null;
-				// res.json(403, { error: 'Login failed' })
 				res.status(403).json({ error: 'Login failed' })
 			}
 			db.close();
@@ -334,9 +331,10 @@ io.on('connection', socket => {
 		console.log(connections)
 	})
 	socket.on('disconnect', function () {
+		console.log('user disconnected')
 		let idx = connections.findIndex(connection => socket.id === connection.socketId)
 		if (idx !== -1) {
-			console.log(`user disconnected,id: ${connections[idx].socketId}`);
+			console.log(`id: ${connections[idx].socketId}`);
 			connections.splice(idx, 1)
 		}
 	});
@@ -402,4 +400,51 @@ function filterUserProfiles(users, id) {
 
 function birthdateToAge(birthdate) {
 	return (Date.now() - birthdate) / (1000 * 60 * 60 * 24 * 365)
+}
+
+function buildClientMatches(ServerMatches) {
+	console.log(`building client matches with matches:`);
+	console.log(ServerMatches);
+
+	if (ServerMatches.length == 0) return [];
+	return new Promise((resolve, reject) => {
+		getSomeUsers(ServerMatches)
+			.then((users) => {
+				console.log(`before map IDs : ` + users);
+				let userProfiles = users.map(user => {
+					user.profile._id = user._id;
+					user.profile.msgs = [];
+					return user.profile;
+				})
+				console.log('RESOLVING PROMISE')
+				console.log(userProfiles);
+				resolve(userProfiles);
+			})
+			.catch((err) => console.log(err));
+	})
+}
+
+function getSomeUsers(userIds) {
+	console.log('userIds on getSomeUsers ' + userIds)
+	console.log('type of ' + typeof userIds)
+	let mongodbUserIds = userIds.map(userId => new mongodb.ObjectID(userId))
+	console.log(mongodbUserIds)
+	return new Promise((resolve, reject) => {
+		dbConnect().then(db => {
+			const collection = db.collection('users');
+			console.log('getsomeusers inside dbconnect' + userIds)
+			collection.find({ _id: { $in: mongodbUserIds } }).toArray((err, users) => {
+				console.log('getsomeusers inside coll find' + users)
+				if (err) {
+					cl('Cannot get you the users you requested. error: ', err)
+					reject(err);
+				} else {
+					console.log('getsomeusers before return users :')
+					console.log(users);
+					db.close();
+					resolve(users);
+				}
+			});
+		})
+	});
 }

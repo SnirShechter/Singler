@@ -108,6 +108,7 @@ export default {
           fName: this.profile.fName,
           lName: this.profile.lName,
           birthdate: this.profile.birthdate,
+          imgUrl: '',
           isMale: this.profile.isMale,
           interests: this.profile.interests,
           desc: this.profile.desc
