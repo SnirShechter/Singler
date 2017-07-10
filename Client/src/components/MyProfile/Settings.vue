@@ -20,8 +20,8 @@
       </el-radio-group>
     </div>
     <div class="btns">
-      <el-button type="primary"  @click="submit">Save Changes</el-button>
-      <el-button type="primary"   @click="cancel">Cancel</el-button>
+      <el-button type="primary" @click="submit">Save Changes</el-button>
+      <el-button type="primary" @click="cancel">Cancel</el-button>
     </div>
   </section>
 </template>
@@ -51,8 +51,14 @@ export default {
   },
   methods: {
     submit() {
+      var filtermatch = {
+        female: this.femalePref,
+        male: this.malePref,
+        minAge: ageRange[0],
+        maxAge: ageRange[1]
+      }
       console.log(1);
-      this.$store.dispatch('e', { profile: this.profile });
+      this.$store.dispatch('editFilterMatch', { profile: this.profile });
     },
     cancel() {
       this.$router.push('/myprofile')

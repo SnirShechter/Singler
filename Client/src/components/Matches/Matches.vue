@@ -3,6 +3,7 @@
     <ul v-if="isInChat">
       <chat-preview v-for="currMatch in matches" :match="currMatch" :key="currMatch.id" @click.native="selectMatch(currMatch)"></chat-preview>
     </ul>
+    <!--<transition name="component-fade" mode="out-in">-->
     <component v-else :matchId="selected" @toggleChat="toggleChat" :is="chatName"></component>
   </section>
 </template>

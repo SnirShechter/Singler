@@ -111,7 +111,8 @@ export default {
       this.presentMode = !this.presentMode
     },
     commitChange() {
-      this.presentMode = !this.presentMode,
+      // this.presentMode = !this.presentMode,
+      filterMatch
       console.log(this.profile);
       this.$store.dispatch('editFilterMatch', { filterMatch: filterMatch });
     },

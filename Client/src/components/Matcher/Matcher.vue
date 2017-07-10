@@ -3,7 +3,11 @@
     <div class="img-container">
       <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
       <p :class="{details: !isShowingDetails}">
-        <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
+        <div>
+          <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
+          <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
+        </div>
+        <span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
         <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
       </p>
       <div class="btns">
