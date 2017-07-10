@@ -413,6 +413,7 @@ function buildClientMatches(ServerMatches) {
 				console.log(`before map IDs : ` + users);
 				let userProfiles = users.map(user => {
 					user.profile._id = user._id;
+					user.profile.msgs = [];
 					return user.profile;
 				})
 				console.log('RESOLVING PROMISE')

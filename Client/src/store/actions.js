@@ -51,7 +51,7 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
-    editFilterMatch(context, filterMatch) {
+  editFilterMatch(context, filterMatch) {
     axios.put(`${SERVER_URL}/users/` + context.state._id, filterMatch)
       .then((res) => {
         context.commit('editFilterMatch', filterMatch)
@@ -70,8 +70,6 @@ export default {
       })
   },
   like(context, { targetId, isLiked }) {
-    console.log(context.state)
-    console.log(isLiked);
     isLiked = isLiked ? 'like' : 'not';
     console.log(isLiked);
     context.commit('like', { targetId, isLiked });
@@ -104,5 +102,11 @@ export default {
   sendMsg(context) {
     let msg = { from: context.state._id, to: '596319ad35fed710706f2127', txt: 'did you get the msg?' }
     socket.send(msg);
+  },
+  getAllMatchMsgs(context, targetId) {
+    axios.get(`/data/chat/users/${context._id}/${targetId}`)
+    .then(res=>{
+      console.log(res);
+    })
   }
 };

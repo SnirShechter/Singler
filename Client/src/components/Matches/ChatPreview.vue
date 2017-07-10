@@ -5,11 +5,11 @@
     
             <div class="msg-details">
                 <p>
-                    <span class="theme">{{match.matchedProfile.fName }} {{match.matchedProfile.lName }} </span>
+                    <span class="theme">{{match.fName }} {{match.lName }} </span>
                     {{timestamp}}
                 </p>
                 <p>
-                    {{match.msgs[lastMessage].txt}}
+                    <!--{{match.msgs[lastMessage].txt}}-->
                 </p>
             </div>
         </li>

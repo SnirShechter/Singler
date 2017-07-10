@@ -12,6 +12,9 @@ import chatPreview from './ChatPreview'
 import chat from './Chat'
 export default {
   name: 'Matches',
+  created() {
+    // this.$store.dispatch('getAllMatchMsgs', this.$store.state.matches[0]._Id)
+  },
   data() {
     return {
       selected: null,
@@ -33,7 +36,6 @@ export default {
   },
   computed: {
     matches() {
-      // console.log(this.$store.getters.getMatches)
       return this.$store.getters.getMatches;
     },
   },
