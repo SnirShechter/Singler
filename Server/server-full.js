@@ -396,11 +396,19 @@ io.on('connection', function (socket) {
 cl('WebSocket is Ready');
 
 function filterUserProfiles(users, id) {
-	idx = users.findIndex(user => this._id === id);
+	var idx = users.findIndex(user => {
+		return user._id == id
+	});
+	console.log(idx);
+	console.log(id);
+	console.log(users[idx])
 	// destructuring the filtermap + splicing its own user object
-	var { filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes, matches } = users.splice(idx, 1)
+	// console.log(users.splice(idx, 1).matches);
+	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes } = users[idx];
+	users.splice(idx, 1);
+
 	var filterFunction = like => {
-		let LikedUserIdx = findIndex(user => {
+		let LikedUserIdx = users.findIndex(user => {
 			return user._id === Object.keys(like)[0]
 		})
 		users.splice(LikedUserIdx, 1);
@@ -409,6 +417,12 @@ function filterUserProfiles(users, id) {
 	// filtering out the likes and matches of the user
 	likes.map(filterFunction)
 	matches.map(filterFunction)
+
+	// adjusting user data so that only a profile with an Id will return
+	var userProfiles = users.map(user => {
+		user.profile._id = user._id;
+		return user.profile;
+	})
 
 	// filtering out the users not matching the filtermap criterias
 	userProfiles = userProfiles.filter(profile => {
@@ -420,11 +434,6 @@ function filterUserProfiles(users, id) {
 			!profile.isMale && !femalePref)
 	})
 
-	// adjusting user data so that only a profile with an Id will return
-	var userProfiles = users.map(user => {
-		user.profile._id = user._id;
-		return user.profile;
-	})
 
 	return userProfiles;
 }

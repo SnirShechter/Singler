@@ -10,6 +10,7 @@ export default {
       .catch((error) => {
         console.log(error);
         console.log('SOMETHING WENT TERRIBLY BAD')
+        //  context.commit('login', res.data)
       })
   },
   login(context, { uName, password }) {
