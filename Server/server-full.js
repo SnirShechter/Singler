@@ -439,5 +439,5 @@ function filterUserProfiles(users, id) {
 }
 
 function birthdateToAge(birthdate) {
-	return (Date.now() - profile.birthdate) / (1000 * 60 * 60 * 24 * 365)
+	return (Date.now() - birthdate) / (1000 * 60 * 60 * 24 * 365)
 }
