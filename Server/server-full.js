@@ -214,6 +214,27 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	});
 });
 
+// DELETE
+// app.delete('/data/:objType/:id', function (req, res) {
+// 	const objType 	= req.params.objType;
+// 	const objId 	= req.params.id;
+// 	cl(`Requested to DELETE the ${objType} with id: ${objId}`);
+// 	dbConnect().then((db) => {
+// 		const collection = db.collection(objType);
+// 		collection.deleteOne({ _id: new mongodb.ObjectID(objId) }, (err, result) => {
+// 			if (err) {
+// 				cl('Cannot Delete', err)
+// 				res.json(500, { error: 'Delete failed' })
+// 			} else {
+// 				cl("Deleted", result);
+// 				res.json({});
+// 			}
+// 			db.close();
+// 		});
+
+// 	});
+// });
+
 // POST - adds user
 app.post('/data/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
