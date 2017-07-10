@@ -64,8 +64,10 @@ function dbConnect() {
 }
 
 // GETs a list
-app.get('/data/users', function (req, res) {
+app.get('/data/users/all/:id', function (req, res) {
 	const objType = 'users';
+	const userId = req.params.id;
+
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
 		collection.find({}).toArray((err, objs) => {
@@ -73,11 +75,8 @@ app.get('/data/users', function (req, res) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
 			} else {
-				cl("Returning list of " + objs.length + " " + objType); // + "s");
-				objs = objs.map(obj => {
-					obj.profile._id = obj._id;
-					return obj.profile;
-				})
+				cl("Returning list of " + objs.length + " " + objType);
+				objs = filterUserProfiles(objs, userId);
 				res.json(objs);
 			}
 			db.close();
@@ -179,38 +178,6 @@ app.get('/data/stam/matches/:id', function (req, res) {
 		});
 });
 
-// PUT - update like for user
-// app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
-// // app.put('/data/:objType/:id/:newUname', function (req, res) {
-// 	// const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	const targetId 	= req.params.trgId;
-// 	const isLike 	=  req.params.like;
-// 	// const newObj 	= req.body;
-// 	// const newUname 	=  req.params.newUname;
-// 	// if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
-
-// 	cl(`Requested to update the likes of id: ${objId}`);
-
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection('users');
-// 		collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}},
-// 			(err, result) => {
-// 				if (err) {
-// 					cl('Cannot Update', err)
-// 					res.json(500, { error: 'Update failed' })
-// 				} else {
-// 					// res.json(newObj);
-// 					if (isLike) {
-// 						check4Match(collection, objId, targetId, res);
-// 					}
-// 					cl('updated likes of: ', objId);
-// 				}
-// 				db.close();
-// 			});
-// 	});
-// });
-
 app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	const userId = req.params.id;
 	const likedUserId = req.params.trgId;
@@ -247,104 +214,6 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	});
 });
 
-
-// function check4Match(collection, objId, targetId, res) {
-// 	console.log('entered function check4Matche...');
-// 	var _targetId = new mongodb.ObjectID(targetId);
-
-// 	//  Checking whether the user got like back
-// 	return collection.findOne({ _id: _targetId, "likes": { [objId]: "true" } })
-// 		.then((trgObj) => {
-// 			if (trgObj) {
-// 				cl("Found MATCH for: " + _targetId + '!!!');
-// 				// res.json(trgObj);
-// 				handleMatch(collection, objId, targetId, res);
-// 			} else {
-// 				cl('no match!');
-// 			}
-// 		})
-// 		.catch(err => {
-// 			cl('Cannot get you that ', err)
-// 			res.status(404).json({ error: 'not found' });
-// 		})
-// }
-
-// function check4Match(collection, objId, targetId, res) {
-// 	console.log('entered function check4Matche...');
-// 	var _targetId = new mongodb.ObjectID(targetId);
-
-// 	//  Checking whether the user got like back
-// 	return collection.findOne({ _id: _targetId, "likes": { [objId]: "true" } });
-// }
-
-
-// function handleMatch(objId, targetId, res) {
-// 	updateMatchDB(objId, targetId, res);
-// 	// Continue from here... Taly.
-// 	// var matchId = "595cf6e2211d5f28b4ee6991";
-// 	// updateMatch2User(collection, matchId, objId, targetId, res);
-// 	// updateMatch2User(collection, matchId, objId, targetId, res);
-
-// 	// Send MATCH by socket?? or service worker??
-// }
-
-// function updateMatchDB(objId, targetId, res) {
-// 	cl("entered updateMatchDB");
-// 	// bug?!?: connecting to db, though already connected
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection('matches');
-// 		var matchObj = { date: Date.now(), id1: objId, id2: targetId, msg: [] };
-// 		collection.insert(matchObj, (err, result) => {
-// 			if (err) {
-// 				cl("Couldnt insert match", err)
-// 				res.json(500, { error: 'Failed to add' })
-// 			} else {
-// 				cl("match added");
-// 				res.json(matchObj);
-// 			}
-// 			db.close();
-// 		});
-// 	});
-// }
-
-// function updateMatch2User(collection, matchId, objId, targetId, res) {
-// 	cl("entered update Match 2User function");
-// 	// const collection = db.collection('users');
-// 	// collection.updateOne({ _id: new mongodb.ObjectID(objId) }, {$addToSet: { "likes": {[targetId] : isLike}}}
-// 	collection.updateOne({ _id: new mongodb.ObjectID(objId) }, { $addToSet: { "matches": { [matchId]: objId } } },
-// 		(err, result) => {
-// 			if (err) {
-// 				cl("Couldnt insert match", err)
-// 				res.json(500, { error: 'Failed to add' })
-// 			} else {
-// 				cl("match added");
-// 				// res.json(MatchObj);
-// 			}
-// 		});
-
-// }
-
-// DELETE
-// app.delete('/data/:objType/:id', function (req, res) {
-// 	const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	cl(`Requested to DELETE the ${objType} with id: ${objId}`);
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection(objType);
-// 		collection.deleteOne({ _id: new mongodb.ObjectID(objId) }, (err, result) => {
-// 			if (err) {
-// 				cl('Cannot Delete', err)
-// 				res.json(500, { error: 'Delete failed' })
-// 			} else {
-// 				cl("Deleted", result);
-// 				res.json({});
-// 			}
-// 			db.close();
-// 		});
-
-// 	});
-// });
-
 // POST - adds user
 app.post('/data/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
@@ -380,8 +249,6 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 
 
 
-/////////////////////////////////////////////////////////////////////////
-// /data/chat/messages/
 // Add message
 app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
@@ -433,32 +300,6 @@ app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
 		});
 	});
 });
-
-/////////////////////////////////////////////////////////////////////////
-
-
-// PUT - updates
-// app.put('/data/:objType/:id', function (req, res) {
-// 	const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	const newObj 	= req.body;
-// 	if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
-
-// 	cl(`Requested to UPDATE the ${objType} with id: ${objId}`);
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection(objType);
-// 		collection.updateOne({ _id: new mongodb. (objId) }, newObj,
-// 			(err, result) => {
-// 				if (err) {
-// 					cl('Cannot Update', err)
-// 					res.json(500, { error: 'Update failed' })
-// 				} else {
-// 					res.json(newObj);
-// 				}
-// 				db.close();
-// 			});
-// 	});
-// });
 
 // Basic Login/Logout/Protected assets
 app.post('/login', function (req, res) {
@@ -533,16 +374,49 @@ io.on('connection', function (socket) {
 
 cl('WebSocket is Ready');
 
-// Some small time utility functions
+function filterUserProfiles(users, id) {
+	var idx = users.findIndex(user => {
+		return user._id == id
+	});
+	console.log(idx);
+	console.log(id);
+	console.log(users[idx])
+	// destructuring the filtermap + splicing its own user object
+	// console.log(users.splice(idx, 1).matches);
+	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes } = users[idx];
+	users.splice(idx, 1);
+
+	var filterFunction = like => {
+		let LikedUserIdx = users.findIndex(user => {
+			return user._id === Object.keys(like)[0]
+		})
+		users.splice(LikedUserIdx, 1);
+	}
+
+	// filtering out the likes and matches of the user
+	likes.map(filterFunction)
+	matches.map(filterFunction)
+
+	// adjusting user data so that only a profile with an Id will return
+	var userProfiles = users.map(user => {
+		user.profile._id = user._id;
+		return user.profile;
+	})
+
+	// filtering out the users not matching the filtermap criterias
+	userProfiles = userProfiles.filter(profile => {
+		let age = birthdateToAge(profile.birthdate);
+
+		// basicly a boolean representing the user NOT matching the criteria, so a ! is inserted before
+		return !(age > maxAge || age < minAge ||
+			profile.isMale && !malePref ||
+			!profile.isMale && !femalePref)
+	})
 
 
+	return userProfiles;
+}
 
-
-// function cl(...params) {
-// 	console.log.apply(console, params);
-// }
-
-// Just for basic testing the socket
-// app.get('/', function(req, res){
-//   res.sendFile(__dirname + '/test-socket.html');
-// });
+function birthdateToAge(birthdate) {
+	return (Date.now() - profile.birthdate) / (1000 * 60 * 60 * 24 * 365)
+}

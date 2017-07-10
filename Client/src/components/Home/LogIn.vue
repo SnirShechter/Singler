@@ -8,8 +8,8 @@
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
         <el-button class="sign-in" type="primary" @click="login">Log in</el-button>
         <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
-        <p>you don`t have account yet?
-            <router-link to="/register"> register now! </router-link>
+        <p>Don't have an account yet?
+            <router-link to="/register"> Register now! </router-link>
         </p>
     </section>
 </template>
@@ -25,9 +25,9 @@ export default {
     },
     methods: {
         login() {
-            // console.log(this.username, this.password);
-            console.log('ans', this.$store.dispatch('login', { uName: this.username, password: this.password }))               
-            //  this.$router.push('matcher')
+            console.log(this.username,this.password);
+            this.$store.dispatch('login',{uName:this.username, password:this.password});
+            this.$store.dispatch('getUsersToShow');
         }
     }
 }
