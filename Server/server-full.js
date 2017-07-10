@@ -163,17 +163,17 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 				// return check4Match(collection, objId, targetId, res);
 				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
 			}).then((matchResult) => { //update match
-				cl('got like checking match');
 				if (matchResult) { //found match
+					cl('Found a match!');
 					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": { [likedUserId]: true } } })
 						.then(() => {
 							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": { [userId]: true } } });
 						})
 						.then(() => {
 							db.close();
+							res.json({ message: 'Updated like and found a match!', isMatch: true })
 						});
-				}
-				res.json({ messege: 'updated' });
+				} else res.json({ message: 'Updated like', isMatch: false });
 			})
 			.catch(err => {
 				cl('Cannot get you that ', err)
@@ -357,13 +357,14 @@ io.on('connection', socket => {
 
 function filterUserProfiles(users, id) {
 	var idx = users.findIndex(user => {
+		console.log(user._id)
 		return user._id == id
 	});
-	if (idx === -1) 
-	console.log(users)
-	console.log(idx)
-	return 'Recieved an invalid ID'
-	console.log(idx);
+	if (idx === -1) {
+		console.log(idx)
+		console.log(id)
+		return 'Recieved an invalid ID'
+	}
 	// destructuring the filtermap + splicing its own user object
 	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes } = users[idx];
 	users.splice(idx, 1);

@@ -18,9 +18,6 @@
 export default {
   name: 'matcher',
   created() {
-    console.log('requesting users on matcher')
-    console.log(this.$store.state._id)
-    this.$store.dispatch('getUsersToShow');
   },
   data() {
     return {

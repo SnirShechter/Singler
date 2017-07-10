@@ -13,6 +13,7 @@ export default {
       })
       .then(() => {
         router.push('matcher');
+        context.dispatch('getUsersToShow', context.state._id);
       })
       .catch((error) => {
         console.log(error);
@@ -60,7 +61,7 @@ export default {
       })
   },
   getUsersToShow(context, id) {
-    console.log('getting users to show')
+    console.log('getting users to show with id ' + id)
     axios.get(`${SERVER_URL}/data/users/all/${id}`)
       .then((res) => {
         console.log(res.data);
