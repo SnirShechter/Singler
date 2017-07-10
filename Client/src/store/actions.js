@@ -18,6 +18,7 @@ export default {
       .then((res) => {
         console.log(res.data); // <-- console.log
         context.commit('login', res.data)
+        context.dispatch('getUsersToShow');
       })
       .catch((error) => {
         console.log(error); // <-- console.log

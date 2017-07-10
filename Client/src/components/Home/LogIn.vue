@@ -27,7 +27,6 @@ export default {
         login() {
             console.log(this.username,this.password);
             this.$store.dispatch('login',{uName:this.username, password:this.password});
-            this.$store.dispatch('getUsersToShow');
         }
     }
 }
