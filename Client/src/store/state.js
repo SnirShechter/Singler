@@ -9,10 +9,10 @@ const profile = {
     interests: '',    // interests: ['Soccer','Gaming','Shopping','Movies']
     desc: ''                            // desc: 'I love hiking, dancing, shopping, prefer girls with brown hair'
 }
-const likes = {
+const likes = [
     // '4': true, // ug39h4j: true
     // '5': false // u9gh39h: false
-}
+]
 const filtermap = {
     female: false, // female: true
     male: false,   // female: true
