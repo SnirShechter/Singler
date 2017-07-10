@@ -25,8 +25,9 @@ export default {
     },
     methods: {
         login() {
-            console.log(this.username,this.password);
-            this.$store.dispatch('login',{uName:this.username, password:this.password});
+            // console.log(this.username, this.password);
+            console.log('ans', this.$store.dispatch('login', { uName: this.username, password: this.password }))               
+            //  this.$router.push('matcher')
         }
     }
 }
