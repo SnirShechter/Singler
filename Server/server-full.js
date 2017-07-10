@@ -67,7 +67,6 @@ function dbConnect() {
 app.get('/data/users/all/:id', function (req, res) {
 	const objType = 'users';
 	const userId = req.params.id;
-
 	dbConnect().then(db => {
 		const collection = db.collection(objType);
 		collection.find({}).toArray((err, objs) => {
@@ -75,8 +74,9 @@ app.get('/data/users/all/:id', function (req, res) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
 			} else {
-				cl("Returning list of " + objs.length + " " + objType);
 				objs = filterUserProfiles(objs, userId);
+				if (typeof objs !== 'string') cl("Returning list of " + objs.length + " " + objType);
+				else cl('something went wrong. error: ' + objs)
 				res.json(objs);
 			}
 			db.close();
@@ -113,37 +113,6 @@ app.get('/data/:objType/:id', function (req, res) {
 
 		});
 });
-
-
-// GETs a match by "match Id"
-// app.get('/data/matches/:mid', function (req, res) {
-// 	const objType = req.params.objType;
-// 	const objId = req.params.id;
-// 	cl(`Getting you an ${objType} with id: ${objId}`);
-// 	dbConnect()
-// 		.then((db) => {
-// 			const collection = db.collection(objType);
-// 			let _id;
-// 			try {
-// 				_id = new mongodb.ObjectID(objId);
-// 			}
-// 			catch (e) {
-// 				return Promise.reject(e);
-// 			}
-// 			return collection.findOne({ _id: _id })
-// 				.then((obj) => {
-// 					cl("Returning a single item from " + objType);
-// 					res.json(obj);
-// 					db.close();	
-// 				})
-// 				.catch(err => {
-// 					cl('Cannot get you that ', err)
-// 					res.json(404, { error: 'not found' })
-// 					db.close();	
-// 				})
-
-// 		});
-// });
 
 // GET matches per user
 // app.get('/data/:objType/:id', function (req, res) {
@@ -214,27 +183,6 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	});
 });
 
-// DELETE
-// app.delete('/data/:objType/:id', function (req, res) {
-// 	const objType 	= req.params.objType;
-// 	const objId 	= req.params.id;
-// 	cl(`Requested to DELETE the ${objType} with id: ${objId}`);
-// 	dbConnect().then((db) => {
-// 		const collection = db.collection(objType);
-// 		collection.deleteOne({ _id: new mongodb.ObjectID(objId) }, (err, result) => {
-// 			if (err) {
-// 				cl('Cannot Delete', err)
-// 				res.json(500, { error: 'Delete failed' })
-// 			} else {
-// 				cl("Deleted", result);
-// 				res.json({});
-// 			}
-// 			db.close();
-// 		});
-
-// 	});
-// });
-
 // POST - adds user
 app.post('/data/:objType', upload.single('file'), function (req, res) {
 	const objType = req.params.objType;
@@ -244,14 +192,10 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 	obj.likes = []
 	obj.matches = [];
 
-	// delete obj._id;
-
 	// If there is a file upload, add the url to the obj
 	if (req.file) {
 		obj.imgUrl = serverRoot + req.file.filename;
 	}
-
-
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 
@@ -381,29 +325,46 @@ http.listen(3003, function () {
 
 });
 
-
-io.on('connection', function (socket) {
+var connections = [];
+io.on('connection', socket => {
 	console.log('a user connected');
+	socket.on('identify', userId => {
+		connections.push({ socketId: socket.id, userId })
+		console.log(`identified socket connection as: ${userId}`);
+		console.log(connections)
+	})
 	socket.on('disconnect', function () {
-		console.log('user disconnected');
+		let idx = connections.findIndex(connection => socket.id === connection.socketId)
+		if (idx !== -1) {
+			console.log(`user disconnected,id: ${connections[idx].socketId}`);
+			connections.splice(idx, 1)
+		}
 	});
-	socket.on('chat message', function (msg) {
-		// console.log('message: ' + msg);
-		io.emit('chat message', msg);
-	});
+	socket.on('message', msg => {
+		let connectionTarget = connections.find(connection => {
+			return msg.to === connection.userId
+		})
+		console.log('connection target:')
+		console.log(connectionTarget)
+		io.to(connectionTarget.socketId).send(msg);
+	})
 });
 
-cl('WebSocket is Ready');
+// socket.on('chat message', function (msg) {
+// 	console.log('message: ' + msg);
+// 	io.emit('chat message', msg);
+// });
 
 function filterUserProfiles(users, id) {
 	var idx = users.findIndex(user => {
 		return user._id == id
 	});
+	if (idx === -1) 
+	console.log(users)
+	console.log(idx)
+	return 'Recieved an invalid ID'
 	console.log(idx);
-	console.log(id);
-	console.log(users[idx])
 	// destructuring the filtermap + splicing its own user object
-	// console.log(users.splice(idx, 1).matches);
 	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes } = users[idx];
 	users.splice(idx, 1);
 
