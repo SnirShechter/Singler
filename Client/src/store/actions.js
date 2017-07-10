@@ -26,6 +26,7 @@ export default {
       .then((res) => {
         console.log(res.data); // <-- console.log
         context.commit('login', res.data)
+        console.log(res.data)
         socket.emit('identify', res.data._id)
         socket.on('message', msg => {
           console.log(msg);
@@ -66,9 +67,10 @@ export default {
     context.commit('like', { targetId, isLiked });
     axios.put(`${SERVER_URL}/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
+        console.log(res.data.message)
         console.log('LIKED, res: ' + res);
         if (res.data.isMatch) {
-          context.dispatch('match', targetId, this.$store.getters.nextUser.profile);
+          context.dispatch('match', targetId, context.getters.nextUser.profile);
         }
       })
       .catch((error) => {
@@ -80,7 +82,7 @@ export default {
   match(context, targetId, targetProfile) {
     var match = { targetId, targetProfile, msgs: [] };
     context.commit('match', match);
-    this.$message('You have a new match!!!');
+    console.log('You have a new match!!!');
   },
   unmatch(context, matchId) {
     axios.delete('/matches/' + matchId)

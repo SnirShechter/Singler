@@ -30,7 +30,7 @@
                     <i class="el-icon-arrow-left" @click="toChatPreview"></i>
                   </div>
                   <div class="avatar">
-                    <img :src="match.matchedProfile.imgUrl" alt="Avatar">
+                    <!--<img :src="match.matchedProfile.imgUrl" alt="Avatar">-->
                   </div>
                   <div class="name">
                     <span>{{match.matchedProfile.fName }}</span>
