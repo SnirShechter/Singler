@@ -6,8 +6,9 @@
         </h1>
         <el-input class="sign-in" type="text" placeholder="Username" v-model="username"></el-input>
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
-        <el-button class="sign-in" type="primary" @click="login">Log in</el-button>
+        <el-button class="sign-in" type="primary" @click.enter="login">Log in</el-button>
         <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
+    
         <p>Don't have an account yet?
             <router-link to="/register"> Register now! </router-link>
         </p>
@@ -15,18 +16,32 @@
 </template>
 
 <script>
+
 export default {
     name: 'login',
     data() {
         return {
             username: '',
-            password: ''
+            password: '',
         }
     },
     methods: {
         login() {
-            console.log(this.username,this.password);
-            this.$store.dispatch('login',{uName:this.username, password:this.password});
+            console.log("inserted username: ", this.username, "inserted password: ", this.password);
+            this.$store.dispatch('login', { uName: this.username, password: this.password })
+        }
+    }, 
+    computed: {
+        showErrorIfNotReg() {
+            return this.$store.state.numUnRegLogin;
+        }
+    },
+    watch: {
+        showErrorIfNotReg(newVal) {
+            this.$notify.error({
+                title: 'Error',
+                message: 'Cannot login, please register!!!'
+            })
         }
     }
 }

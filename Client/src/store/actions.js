@@ -18,12 +18,14 @@ export default {
     axios.post(`${SERVER_URL}/login`, { uName, password })
       .then((res) => {
         console.log(res.data); // <-- console.log
-        context.commit('login', res.data)
+        context.commit('login', res.data);
         context.dispatch('getUsersToShow');
       })
       .catch((error) => {
-        console.log(error); // <-- console.log
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        // console.log(error); // <-- console.log
+        // console.log('SOMETHING WENT TERRIBLY BAD')
+        context.commit('setError');
+        console.log('cannot login, please register!');
       })
   },
   editProfile(context, profile) {

@@ -34,6 +34,10 @@ export default {
         // console.log(matchId, msg)
         const currMatch = singlerService.findMatchById(state.matches, matchId)
         currMatch.msgs.push(msg);
+    },
+    setError (state) {
+        state.numUnRegLogin++;
+        console.log('in mutation: ', state.numUnRegLogin);
     }
 }
 
