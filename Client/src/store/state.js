@@ -9,15 +9,12 @@ const profile = {
     interests: '',
     desc: ''
 }
-<<<<<<< HEAD
+
 const likes = [
     // '4': true, // ug39h4j: true
     // '5': false // u9gh39h: false
 ]
-=======
-const likes = {
-}
->>>>>>> dc54386af1bff792f67ece17ff1db687f2464cec
+
 const filtermap = {
     female: false,
     male: false,
