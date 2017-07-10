@@ -49,6 +49,16 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
+    editFilterMatch(context, filterMatch) {
+    axios.put(`${SERVER_URL}/users/` + context.state._id, filterMatch)
+      .then((res) => {
+        context.commit('editFilterMatch', filterMatch)
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log('SOMETHING WENT TERRIBLY BAD')
+      })
+  },
   getUsersToShow(context, id) {
     console.log('getting users to show')
     axios.get(`${SERVER_URL}/data/users/all/${id}`)

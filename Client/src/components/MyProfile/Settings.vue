@@ -30,7 +30,7 @@ export default {
        filtermap: {
         female: false,
         male: false,
-        ageRange: [18, 120]
+        ageRange: [this.$store.state.filtermap.minAge, this.$store.state.filtermap.maxAge]
       }
     }
   },

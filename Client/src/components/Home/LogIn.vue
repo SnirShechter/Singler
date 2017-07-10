@@ -1,6 +1,5 @@
 <template>
     <section class="login">
-        </el-alert>
         <h1>
             <span class="theme"> Singler </span>
         </h1>
