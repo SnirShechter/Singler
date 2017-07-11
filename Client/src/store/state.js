@@ -19,7 +19,7 @@ const filtermap = {
     female: false,
     male: false,
     minAge: 0,
-    maxAge: 0 
+    maxAge: 0
 }
 const matches = [];
 const usersToShow = [];
@@ -27,6 +27,8 @@ const usersToShow = [];
 
 // in order to know when unregistered user tried to login
 var numUnRegLogin = 0;
+
+var newMatch = false;
 
 
 const state = {

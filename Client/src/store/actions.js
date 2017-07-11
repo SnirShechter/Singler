@@ -43,7 +43,7 @@ export default {
     })
   },
   editProfile(context, profile) {
-    debugger;
+    // debugger;
     axios.put(`${SERVER_URL}/data/users/`, { _id: context.state._id, profile })
       .then((res) => {
         context.commit('editProfile', profile)

@@ -34,14 +34,13 @@ export default {
         },
         keymonitor(event) {
             // console.log(event.key);
-            if(event.key === "Enter")
-            {
+            if (event.key === "Enter") {
                 console.log("enter key was pressed!");
                 // console.log('the id of the input was: ' + event.currentTarget.id);
                 this.login();
             }
         }
-    }, 
+    },
     computed: {
         showErrorIfNotReg() {
             return this.$store.state.numUnRegLogin;
@@ -58,7 +57,7 @@ export default {
             })
         },
         goToMatcherScreen() {
-            if(this.$store.state.toMatcher) this.$router.push('matcher');
+            if (this.$store.state.toMatcher) this.$router.push('matcher');
         }
     }
 }
