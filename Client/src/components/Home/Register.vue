@@ -29,10 +29,10 @@
       </el-radio-group>
     </div>
     <!--  
-      <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-        <img v-if="imageUrl" :src="profile.imageUrl" class="avatar">
-        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-      </el-upload>-->
+          <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="profile.imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>-->
   
     <h1 span class="theme">match preferance</span>
     </h1>
@@ -116,37 +116,37 @@ export default {
         this.$message.error('Avatar picture size can not exceed 2MB!');
       }
       return isJPG && isLt2M;
-    }
-  },
-  submit() {
-    var user = {
-      uName: this.prefs.uName,
-      password: this.prefs.password,
-      profile: {
-        fName: this.profile.fName,
-        lName: this.profile.lName,
-        birthdate: this.profile.birthdate,
-        imgUrl: '',
-        isMale: this.profile.isMale,
-        interests: this.profile.interests,
-        desc: this.profile.desc
-      },
-      filtermap: {
-        female: this.femalePref,
-        male: this.malePref,
-        minAge: this.filtermap.ageRange[0],
-        maxAge: this.filtermap.ageRange[1]
+    },
+    submit() {
+      var user = {
+        uName: this.prefs.uName,
+        password: this.prefs.password,
+        profile: {
+          fName: this.profile.fName,
+          lName: this.profile.lName,
+          birthdate: this.profile.birthdate,
+          imgUrl: '',
+          isMale: this.profile.isMale,
+          interests: this.profile.interests,
+          desc: this.profile.desc
+        },
+        filtermap: {
+          female: this.femalePref,
+          male: this.malePref,
+          minAge: this.filtermap.ageRange[0],
+          maxAge: this.filtermap.ageRange[1]
+        }
       }
+      console.log(user); // <----------- CONSOLE.LOG
+      if (this.prefs.repeatPassword === user.password) {
+        this.$store.dispatch('register', user)
+      }
+      else
+        this.$notify.error({
+          title: 'Error',
+          message: 'Passwords do not match!'
+        })
     }
-    console.log(user); // <----------- CONSOLE.LOG
-    if (this.prefs.repeatPassword === user.password) {
-      this.$store.dispatch('register', user)
-    }
-    else
-      this.$notify.error({
-        title: 'Error',
-        message: 'Passwords do not match!'
-      })
   }
 }
 </script>
