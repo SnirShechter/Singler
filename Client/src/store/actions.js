@@ -103,14 +103,20 @@ export default {
         context.commit('unmatch', matchId);
       })
   },
-  sendMsg(context) {
-    let msg = { from: context.state._id, to: '596319ad35fed710706f2127', txt: 'did you get the msg?' }
-    socket.send(msg);
+  sendMsg(context, msg) {
+    context.commit('addMsg', msg);
+    console.log('Msg sent!')
+    socket.send(msg, (res) => {
+      console.log('Msg returned!')
+      console.log(res.data)
+      if (msg.txt !== res.data.txt) {
+        console.log('Error, server did not receive the message')
+        context.commit('errorMsg', msg);
+      }
+    });
   },
   getAllMatchMsgs(context, targetId) {
-    axios.get(`/data/chat/users/${context._id}/${targetId}`)
-    .then(res=>{
-      console.log(res);
-    })
+    axios.get(`${SERVER_URL}/data/chat/users/${context.state._id}/${targetId}`)
+      .then(res => console.log(res))
   }
 };

@@ -27,14 +27,14 @@
               <div class="chat-container">
                 <div class="user-bar">
                   <div class="back">
-                    <i class="el-icon-arrow-left" @click="toChatPreview"></i>
+                    <i class="el-icon-arrow-left" @click="backToMatches"></i>
                   </div>
                   <div class="avatar">
                     <!--<img :src="match.imgUrl" alt="Avatar">-->
                   </div>
                   <div class="name">
                     <span>{{match.fName }}</span>
-                    <span class="status">{{infoBar}}</span>
+                    <!--<span class="status">{{infoBar}}</span>-->
                   </div>
                   <div class="actions more">
                     <i class="zmdi zmdi-more-vert"></i>
@@ -53,17 +53,16 @@
                       {{msg.txt}}
                       <span class="metadata">
                         <span class="time">{{msg.at}}</span>
-                        <span class="tick" v-if="msg.from === nickName">
-                          <svg v-if="!msg.processed" xmlns="http://www.w3.org/2000/svg" width="16" height="15" id="msg-dblcheck" x="2047" y="2061">
-                            <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" fill="#92a58c" />
-                          </svg>
-                          <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="15" id="msg-dblcheck-ack" x="2063" y="2076">
-                            <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" fill="#4fc3f7" />
-                          </svg>
-                        </span>
+                        <!--<span class="tick" v-if="msg.from === match._id">-->
+                        <!--<svg v-if="!msg.processed" xmlns="http://www.w3.org/2000/svg" width="16" height="15" id="msg-dblcheck" x="2047" y="2061">-->
+                        <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" fill="#92a58c" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" id="msg-dblcheck-ack" x="2063" y="2076">
+                          <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" fill="#4fc3f7" />
+                        </svg>
+                        <!--</span>-->
                       </span>
                     </div>
-  
                   </div>
                   <form class="conversation-compose">
                     <div class="emoji">
@@ -71,15 +70,16 @@
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M9.153 11.603c.795 0 1.44-.88 1.44-1.962s-.645-1.96-1.44-1.96c-.795 0-1.44.88-1.44 1.96s.645 1.965 1.44 1.965zM5.95 12.965c-.027-.307-.132 5.218 6.062 5.55 6.066-.25 6.066-5.55 6.066-5.55-6.078 1.416-12.13 0-12.13 0zm11.362 1.108s-.67 1.96-5.05 1.96c-3.506 0-5.39-1.165-5.608-1.96 0 0 5.912 1.055 10.658 0zM11.804 1.01C5.61 1.01.978 6.034.978 12.23s4.826 10.76 11.02 10.76S23.02 18.424 23.02 12.23c0-6.197-5.02-11.22-11.216-11.22zM12 21.355c-5.273 0-9.38-3.886-9.38-9.16 0-5.272 3.94-9.547 9.214-9.547a9.548 9.548 0 0 1 9.548 9.548c0 5.272-4.11 9.16-9.382 9.16zm3.108-9.75c.795 0 1.44-.88 1.44-1.963s-.645-1.96-1.44-1.96c-.795 0-1.44.878-1.44 1.96s.645 1.963 1.44 1.963z" fill="#7d8489" />
                       </svg>
                     </div>
-                    <input v-model="text" class="input-msg" name="input" placeholder="Type a message" autocomplete="off" autofocus></input>
+                    <input v-model="txt" class="input-msg" name="input" placeholder="Type a message" autocomplete="off" autofocus></input>
                     <div class="photo">
                       <i class="zmdi zmdi-camera"></i>
                     </div>
-                    <button @click.prevent="send" class="send">
+                    <button @click.prevent="sendMsg()" class="send">
                       <div class="circle">
                         <i class="el-icon-caret-right"></i>
                       </div>
                     </button>
+                    <button @click="printMatch">Print Match</button>
                   </form>
                 </div>
               </div>
@@ -91,51 +91,32 @@
   </section>
 </template>
 <script>
-// import chatPreview from './ChatPreview'
 import moment from 'moment'
+
 export default {
   name: 'Chat',
-   props: ['matchId'],
+  props: ['match'],
   data() {
     return {
-      msgs: [],
-      nickName: null,
-      newMsg: null,
-      text: null,
-      infoBar: null,
-      match: null,
-      timeStamp: null,
-      timePresent: null,
-      // matchId: null
+      txt: ''
     }
   },
-  created() {
-    // this.matchId = this.$route.params.id;
-    this.nickName = 'inbar';
-    this.newMsg = this.createEmptyMsg();
-    // console.log('chat id',this.matchId)
-    this.match = this.$store.getters.getMatch(this.matchId)
-     console.log('bla bla',this.data);
-    // this.msgs = 
-    // [{ at: Date.now(), from: 'inbar', txt: 'heyyyy' }, { at: Date.now(), from: 'Moshe', txt: 'how ary you?' }]
-    //  msgService.conected();
-    at: null,
-      this.newMsg.txt = this.nickName + ' is online now';
-    this.send();
-  },
-  // compudet:{
-  //   match: 
-  // },
   methods: {
-    createEmptyMsg() {
-      return { txt: '', processed: false, from: this.nickName, at: moment().format('h:mm A') };
+    sendMsg() {
+      moment().format('h:mm A')
+      let [fromId, toId, txt, date] = [this.$store.state._id, this.match._id, this.txt, Date.now()]
+      let msg = { txt, fromId, toId, date };
+      this.$store.dispatch('sendMsg', msg);
+      this.txt = '';
     },
-    toChatPreview() {
-        this.$emit('toggleChat');
-      // this.$router.push('matches');
+    backToMatches() {
+      this.$emit('toggleChat');
+    },
+    printMatch() {
+      console.log(match);
     },
     msgClass(msg) {
-      return (msg.from !== this.nickName) ? 'received' : 'sent';
+      return (msg.from === this.match._id) ? 'received' : 'sent';
     },
     send() {
       // console.log(this.newMsg);
@@ -144,20 +125,14 @@ export default {
       this.text = '';
       this.newMsg = this.createEmptyMsg();
     }
-  },
-  watch: {
-    text: function (val) {
-      this.newMsg.txt = val;
-      //msgService.onTyping();
-    }
-
-  },
-  // computed: {
-  //   timestamp: function (msg) {log
-  //     return moment(msg.at).fromNow();
-  //   }
-  // }
+  }
 }
+  // watch: {
+  //   text: function (val) {
+  //     this.newMsg.txt = val;
+  //     //msgService.onTyping();
+  //   }
+  // this.newMsg.txt = this.match.fName + ' is online now';
 
 </script>
 
@@ -178,9 +153,16 @@ export default {
   height: 100%;
 }
 
-.el-icon-arrow-left{
+.el-icon-arrow-left {
   cursor: pointer;
 }
+
+
+
+
+
+
+
 
 
 
@@ -223,6 +205,13 @@ export default {
 
 
 
+
+
+
+
+
+
+
 /* Chat */
 
 .chat {
@@ -232,6 +221,13 @@ export default {
 .chat-container {
   height: 80%;
 }
+
+
+
+
+
+
+
 
 
 
@@ -322,6 +318,13 @@ export default {
 
 
 
+
+
+
+
+
+
+
 /* Conversation */
 
 .conversation {
@@ -359,6 +362,13 @@ export default {
   display: table;
   clear: both;
 }
+
+
+
+
+
+
+
 
 
 
@@ -485,6 +495,13 @@ export default {
 
 
 
+
+
+
+
+
+
+
 /* Compose */
 
 .conversation-compose {
@@ -581,6 +598,13 @@ export default {
   font-size: 24px;
   margin-left: 5px;
 }
+
+
+
+
+
+
+
 
 
 
