@@ -125,7 +125,7 @@ export default {
           fName: this.profile.fName,
           lName: this.profile.lName,
           birthdate: this.profile.birthdate,
-          imgUrl: '',
+          imgUrl: 'http://via.placeholder.com/350x350',
           isMale: this.profile.isMale,
           interests: this.profile.interests,
           desc: this.profile.desc

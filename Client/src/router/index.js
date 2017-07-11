@@ -9,6 +9,7 @@ import matches from '@/components/Matches/Matches'
 import chat from '@/components/Matches/Chat'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import 'font-awesome/css/font-awesome.css'
 import locale from 'element-ui/lib/locale/lang/en'
 
 

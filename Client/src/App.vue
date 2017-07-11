@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <navbar></navbar>
-    <transition name="fade">
+    <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
     <footer>Coffeerights belong to
