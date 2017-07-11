@@ -217,12 +217,12 @@ app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
 	const obj = req.body;
 	obj.date = Date.now();
 	// If there is a file upload, add the url to the obj
-	if (req.file) {
-		obj.imgUrl = serverRoot + req.file.filename;
-	}
+	// if (req.file) {
+	// 	obj.imgUrl = serverRoot + req.file.filename;
+	// }
 
 	dbConnect().then((db) => {
-		const collection = db.collection(objType);
+		const collection = db.collection(messages);
 
 		collection.insert(obj, (err, result) => {
 			if (err) {
@@ -242,19 +242,18 @@ app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
 
 
 // GETs a list of messages of 2 users
-app.get('/data/chat/:objType/:fromId/:toId', function (req, res) {
-	const objType = req.params.objType;
+app.get('/data/chat/messages/:fromId/:toId', function (req, res) {
 	const fromId = req.params.fromId;
 	const toId = req.params.toId;
 	dbConnect().then(db => {
-		const collection = db.collection(objType);
+		const collection = db.collection('messages');
 
 		collection.find({ toId: { $in: [fromId, toId] }, fromId: { $in: [toId, fromId] } }).toArray((err, objs) => {
 			if (err) {
 				cl('Cannot get you a list of ', err)
 				res.json(404, { error: 'not found' })
 			} else {
-				cl("Returning list of " + objs.length + " " + objType);
+				cl("Returning list of " + objs.length + " " + 'messages');
 				res.json(objs);
 			}
 			db.close();
@@ -341,12 +340,26 @@ io.on('connection', socket => {
 	socket.on('message', msg => {
 		console.log('message received!')
 		console.log(msg)
+
+		dbConnect().then((db) => {
+			const collection = db.collection('messages');
+
+			collection.insert(msg, (err, result) => {
+				if (err) {
+					cl(`Couldnt insert message `, err)
+				} else {
+					cl('message added');
+				}
+				db.close();
+			})
+		}).catch(err => {
+			cl('Cannot connect to db... ', err)
+		});
+
 		let connectionTarget = connections.find(connection => {
-			return msg.to === connection.userId
+			return msg.toId === connection.userId
 		})
-		console.log('connection target:')
-		console.log(connectionTarget)
-		io.to(connectionTarget.socketId).send(msg);
+		if (connectionTarget) io.to(connectionTarget.socketId).send(msg);
 	})
 });
 
@@ -408,7 +421,7 @@ function buildClientMatches(ServerMatches) {
 	console.log(`building client matches with matches:`);
 	console.log(ServerMatches);
 
-	if (ServerMatches.length == 0) return new Promise((res,rej)=>res([]));
+	if (ServerMatches.length == 0) return new Promise((res, rej) => res([]));
 	return new Promise((resolve, reject) => {
 		getSomeUsers(ServerMatches)
 			.then((users) => {
