@@ -43,6 +43,12 @@ export default {
     errorMsg(state, msg) {
         const currMatch = singlerService.findMatchById(state.matches, matchId)
         currMatch.msgs.push(msg);
+    },
+    setError (state) {
+        state.numUnRegLogin++;
+    },
+    goToMatcher (state, val) {
+        state.toMatcher = val;
     }
 }
 

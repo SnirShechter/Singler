@@ -25,8 +25,9 @@ export default {
     axios.post(`${SERVER_URL}/login`, { uName, password })
       .then((res) => {
         console.log(res.data); // <-- console.log
-        context.commit('login', res.data)
-        console.log(res.data)
+        context.commit('login', res.data);
+        context.commit('goToMatcher', true);
+        console.log(res.data);
         socket.emit('identify', res.data._id)
         socket.on('message', msg => {
           console.log(msg);
@@ -38,7 +39,10 @@ export default {
       )
       .catch((error) => {
         console.log(error); // <-- console.log
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        // console.log('SOMETHING WENT TERRIBLY BAD');
+        context.commit('setError');
+        context.commit('goToMatcher', false);
+        console.log('cannot login, please register!');
       })
   },
   editProfile(context, profile) {
