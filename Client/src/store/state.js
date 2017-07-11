@@ -25,6 +25,9 @@ const matches = [];
 const usersToShow = [];
 
 
+// in order to know when unregistered user tried to login
+var numUnRegLogin = 0;
+var toMatcher = false;
 
 
 const state = {
@@ -34,7 +37,9 @@ const state = {
     likes,
     matches,
     filtermap,
-    usersToShow
+    usersToShow,
+    numUnRegLogin,
+    toMatcher
 }
 
 export default state
