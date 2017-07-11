@@ -79,7 +79,7 @@
                         <i class="el-icon-caret-right"></i>
                       </div>
                     </button>
-                    <button @click="printMatch">Print Match</button>
+                    <!--<button @click="printMatch">Print Match</button>-->
                   </form>
                 </div>
               </div>
