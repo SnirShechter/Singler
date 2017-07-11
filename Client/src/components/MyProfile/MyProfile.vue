@@ -3,7 +3,7 @@
     <h1>
       <span class="theme">{{$store.state.profile.fName+ ' '+ $store.state.profile.lName}}</span>
     </h1>
-    <img src="../../assets/profile.png"></img>
+    <img :src="$store.state.profile.imgUrl"></img>
     <div class="details">
       <div v-if="presentMode" class="editMode">
         <span class="theme">First Name</span>
