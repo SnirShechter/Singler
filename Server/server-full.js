@@ -417,7 +417,7 @@ function filterUserProfiles(users, id) {
 		return 'Recieved an invalid ID'
 	}
 	// destructuring the filtermap + splicing its own user object
-	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref }, likes } = users[idx];
+	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref, imgUrl: imgUrl }, likes } = users[idx];
 	users.splice(idx, 1);
 
 	var filterFunction = like => {

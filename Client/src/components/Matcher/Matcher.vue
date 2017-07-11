@@ -36,6 +36,7 @@ export default {
       console.log(isLiked)
       // if (this.$store.state.usersToShow.length === 1) this.$store.dispatch('getUsersToShow', this.$store.state._id);
       this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
+      console.log('Taly: ', this.nextUser);
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;
