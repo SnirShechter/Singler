@@ -84,7 +84,6 @@ import moment from 'moment'
 export default {
   name: 'MyProfile',
   created() {
-    console.log(Date.parse(this.$store.state.profile.birthdate))
   },
   data() {
     return {
