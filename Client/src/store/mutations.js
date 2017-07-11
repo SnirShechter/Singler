@@ -40,14 +40,21 @@ export default {
         console.log(`pushing `, match)
         match.msgs.push(msg);
     },
+    addMsgHistory(state, {msgs,match}) {
+        console.log(msgs)
+        console.log(`added msgs to ${match._id}`);
+        match.msgs = msgs;
+        console.log(msgs);
+        console.log(match);
+    },
     errorMsg(state, msg) {
         const currMatch = singlerService.findMatchById(state.matches, matchId)
         currMatch.msgs.push(msg);
     },
-    setError (state) {
+    setError(state) {
         state.numUnRegLogin++;
     },
-    goToMatcher (state, val) {
+    goToMatcher(state, val) {
         state.toMatcher = val;
     }
 }

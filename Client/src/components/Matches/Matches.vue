@@ -13,9 +13,6 @@ import chatPreview from './ChatPreview'
 import chat from './Chat'
 export default {
   name: 'Matches',
-  created() {
-    this.$store.dispatch('getAllMatchMsgs', this.$store.state.matches[0]._id)
-  },
   data() {
     return {
       selected: null,
@@ -26,6 +23,7 @@ export default {
     selectMatch(match) {
       console.log('selecting match : ', match)
       this.selected = match;
+      this.$store.dispatch('getAllMatchMsgs', this.selected)
       this.toggleChat();
     },
     toggleChat() {

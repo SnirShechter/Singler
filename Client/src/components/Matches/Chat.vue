@@ -116,7 +116,7 @@ export default {
       console.log(match);
     },
     msgClass(msg) {
-      return (msg.from === this.match._id) ? 'received' : 'sent';
+      return (msg.fromId === this.match._id) ? 'received' : 'sent';
     },
     send() {
       // console.log(this.newMsg);

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import io from 'socket.io-client'
 import router from '../router'
-
-var socket = io('http://localhost:3003');
-
 const SERVER_URL = 'http://localhost:3003';
+
+var socket = io(SERVER_URL);
+
 export default {
   register(context, user) {
     axios.post(`${SERVER_URL}/data/users`, user) // getting the new user
@@ -30,7 +30,7 @@ export default {
         console.log(res.data);
         socket.emit('identify', res.data._id)
         socket.on('message', msg => {
-          console.log(msg);
+          context.dispatch('receiveMsg', msg)
         })
       })
       .then(() => {
@@ -66,21 +66,17 @@ export default {
       })
   },
   getUsersToShow(context, id) {
-    console.log('getting users to show with id ' + id)
     axios.get(`${SERVER_URL}/data/users/all/${id}`)
       .then((res) => {
-        console.log(res.data);
         context.commit('addUsers', res.data)
       })
   },
   like(context, { targetId, isLiked }) {
     isLiked = isLiked ? 'like' : 'not';
-    console.log(isLiked);
     context.commit('like', { targetId, isLiked });
     axios.put(`${SERVER_URL}/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
         console.log(res.data.message)
-        console.log('LIKED, res: ' + res);
         if (res.data.isMatch) {
           context.dispatch('match', targetId, context.getters.nextUser.profile);
         }
@@ -115,8 +111,15 @@ export default {
       }
     });
   },
-  getAllMatchMsgs(context, targetId) {
-    axios.get(`${SERVER_URL}/data/chat/users/${context.state._id}/${targetId}`)
-      .then(res => console.log(res))
+  receiveMsg(context, msg) {
+    context.commit('addMsg', msg);
+  },
+  getAllMatchMsgs(context, match) {
+    console.log(`getting all msgs from ${match._id} , sent id is ${context.state._id}`)
+    axios.get(`${SERVER_URL}/data/chat/messages/${context.state._id}/${match._id}`)
+      .then(res => {
+        console.log(res);
+        context.commit('addMsgHistory', { msgs: res.data, match })
+      })
   }
 };
