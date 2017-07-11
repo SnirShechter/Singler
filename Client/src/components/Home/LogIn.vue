@@ -1,5 +1,5 @@
 <template>
-    <section class="login">
+    <section class="login" @keyup="keymonitor">
         <h1>
             <span class="theme"> Singler </span>
         </h1>
@@ -31,6 +31,34 @@ export default {
         },
         sendMsg() {
             this.$store.dispatch('sendMsg')
+        },
+        keymonitor(event) {
+            // console.log(event.key);
+            if(event.key === "Enter")
+            {
+                console.log("enter key was pressed!");
+                // console.log('the id of the input was: ' + event.currentTarget.id);
+                this.login();
+            }
+        }
+    }, 
+    computed: {
+        showErrorIfNotReg() {
+            return this.$store.state.numUnRegLogin;
+        },
+        goToMatcherScreen() {
+            return this.$store.state.toMatcher;
+        }
+    },
+    watch: {
+        showErrorIfNotReg(newVal) {
+            this.$notify.error({
+                title: 'Error',
+                message: 'Cannot login, please register!!!'
+            })
+        },
+        goToMatcherScreen() {
+            if(this.$store.state.toMatcher) this.$router.push('matcher');
         }
     }
 }

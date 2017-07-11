@@ -406,7 +406,7 @@ function buildClientMatches(ServerMatches) {
 	console.log(`building client matches with matches:`);
 	console.log(ServerMatches);
 
-	if (ServerMatches.length == 0) return [];
+	if (ServerMatches.length == 0) return new Promise((res,rej)=>res([]));
 	return new Promise((resolve, reject) => {
 		getSomeUsers(ServerMatches)
 			.then((users) => {
