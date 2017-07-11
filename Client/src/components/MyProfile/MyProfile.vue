@@ -67,9 +67,11 @@
         <el-input v-model="profile.desc"></el-input>
       </div>
   
-       <div v-if="presentMode" class="btns">
-        <el-button @click="editProfile" type="primary"> <i class="el-icon-edit"></i> Edit</el-button>
-        <el-button @click="goToSettings" type="primary"> <i class="el-icon-setting"></i> Settings</el-button>
+      <div v-if="presentMode" class="btns">
+        <el-button @click="editProfile" type="primary">
+          <i class="el-icon-edit"></i> Edit</el-button>
+        <el-button @click="goToSettings" type="primary">
+          <i class="el-icon-setting"></i> Settings</el-button>
       </div>
       <div v-else class="btns">
         <el-button @click="commitChange" type="primary"> Save</el-button>
@@ -89,37 +91,25 @@ export default {
     return {
       presentMode: true,
       datePresent: moment(this.$store.state.profile.birthdate).format('L'),
-      profile: {
-        fName: this.$store.state.profile.fName,
-        lName: this.$store.state.profile.lName,
-        interests: this.$store.state.profile.interests,
-        desc: this.$store.state.profile.desc,
-        birthdate: this.$store.state.profile.birthdate,
-        isMale: this.$store.state.profile.isMale
-      }
+      profile: JSON.parse(JSON.stringify(this.$store.state.profile))
     }
   }
   , methods: {
     editProfile() {
-      // this.$notify({
-      //   title: 'Success',
-      //   message: 'This is a success message',
-      //   type: 'success'
-      // });
-     // this.$router.push('/myprofile/edit')  
       this.presentMode = !this.presentMode
     },
     commitChange() {
       // this.presentMode = !this.presentMode,
-      filterMatch
+      // filterMatch
       console.log(this.profile);
-      this.$store.dispatch('editFilterMatch', { filterMatch: filterMatch });
+      this.$store.dispatch('editProfile', this.profile)
+      // this.$store.dispatch('editFilterMatch', { filterMatch });
     },
     cancel() {
       this.presentMode = !this.presentMode
     },
-    goToSettings(){
-          this.$router.push('/myprofile/settings')  
+    goToSettings() {
+      this.$router.push('/myprofile/settings')
     }
 
   }

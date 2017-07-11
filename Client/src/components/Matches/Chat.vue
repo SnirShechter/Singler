@@ -105,6 +105,7 @@ export default {
     sendMsg() {
       moment().format('h:mm A')
       let [fromId, toId, txt, date] = [this.$store.state._id, this.match._id, this.txt, Date.now()]
+      console.log(`from:${fromId},to:${toId}`)
       let msg = { txt, fromId, toId, date };
       this.$store.dispatch('sendMsg', msg);
       this.txt = '';
@@ -172,6 +173,7 @@ export default {
 
 
 
+
 /* Status Bar */
 
 .status-bar {
@@ -212,6 +214,7 @@ export default {
 
 
 
+
 /* Chat */
 
 .chat {
@@ -221,6 +224,7 @@ export default {
 .chat-container {
   height: 80%;
 }
+
 
 
 
@@ -325,6 +329,7 @@ export default {
 
 
 
+
 /* Conversation */
 
 .conversation {
@@ -362,6 +367,7 @@ export default {
   display: table;
   clear: both;
 }
+
 
 
 
@@ -502,6 +508,7 @@ export default {
 
 
 
+
 /* Compose */
 
 .conversation-compose {
@@ -598,6 +605,7 @@ export default {
   font-size: 24px;
   margin-left: 5px;
 }
+
 
 
 

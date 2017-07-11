@@ -166,9 +166,9 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 						})
 						.then(() => {
 							buildClientMatches([userId, likedUserId])
-								.then(([likedUserMatch,userMatch]) => {
-									if(userId !== likedUserMatch._id) console.log(`/////////////////// ERROR: MATCHES SENT ARE OPPOSITE //////////////////////`)
-									res.json({ message: 'Updated like and found a match!', isMatch: true,match:userMatch })
+								.then(([likedUserMatch, userMatch]) => {
+									if (userId !== likedUserMatch._id) console.log(`/////////////////// ERROR: MATCHES SENT ARE OPPOSITE //////////////////////`)
+									res.json({ message: 'Updated like and found a match!', isMatch: true, match: userMatch })
 									console.log('built match for the other user')
 									console.log(likedUserMatch)
 									let connectionTarget = connections.find(connection => {
@@ -214,6 +214,32 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 			} else {
 				cl(objType + " added");
 				res.json(user);
+			}
+			db.close();
+		});
+	});
+});
+
+// POST - updates/edits a user
+app.put('/data/users', upload.single('file'), function (req, res) {
+	cl("PUT for users");
+
+	const profile = req.body.profile;
+	const _id = mongodb.ObjectID(req.body._id);
+
+	// If there is a file upload, add the url to the obj
+	// if (req.file) {
+	// 	profile.imgUrl = serverRoot + req.file.filename;
+	// }
+	dbConnect().then((db) => {
+		const collection = db.collection('users');
+		collection.update({ _id }, { $set: { profile: profile }}, (err, result) => {
+			if (err) {
+				cl(`Couldnt update/edit a user`, err)
+				res.json(500, { error: 'Failed to update/edit the user' })
+			} else {
+				cl('user updated/edited');
+				res.json(profile);
 			}
 			db.close();
 		});
