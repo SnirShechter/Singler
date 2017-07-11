@@ -33,8 +33,14 @@ export default {
     unmatch(state, matchId) {
         delete state.matches[matchId];
     },
-    addMsg(state, { matchId, msg }) {
-        // console.log(matchId, msg)
+    addMsg(state, msg) {
+        let matchedUserId = (msg.toId === state._id) ? msg.fromId : msg.toId;
+        console.log(`finding ` + matchedUserId)
+        let match = state.matches.find(match => match._id === matchedUserId);
+        console.log(`pushing `, match)
+        match.msgs.push(msg);
+    },
+    errorMsg(state, msg) {
         const currMatch = singlerService.findMatchById(state.matches, matchId)
         currMatch.msgs.push(msg);
     }
