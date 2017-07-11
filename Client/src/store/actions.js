@@ -46,13 +46,16 @@ export default {
       })
   },
   editProfile(context, profile) {
+    console.log(' id got:', context.state._id);
+    console.log('profile:', profile);
     axios.put(`${SERVER_URL}/users/` + context.state._id, profile)
       .then((res) => {
         context.commit('editProfile', profile)
       })
       .catch((error) => {
         console.log(error);
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        // console.log('SOMETHING WENT TERRIBLY BAD')
+        console.log('got error from server');
       })
   },
   editFilterMatch(context, filterMatch) {

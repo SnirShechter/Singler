@@ -7,7 +7,8 @@ const profile = {
     imgUrl: '',
     isMale: true,
     interests: '',
-    desc: ''
+    desc: '',
+    picUrl: ''
 }
 
 const likes = [

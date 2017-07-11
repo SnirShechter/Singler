@@ -65,17 +65,34 @@
         <span class="theme">Description</span>
   
         <el-input v-model="profile.desc"></el-input>
-      </div>
   
-       <div v-if="presentMode" class="btns">
-        <el-button @click="editProfile" type="primary"> <i class="el-icon-edit"></i> Edit</el-button>
-        <el-button @click="goToSettings" type="primary"> <i class="el-icon-setting"></i> Settings</el-button>
+        <div class="editMode">
+          <span class="theme">Image</span>
+          <el-input v-model="profile.picUrl"></el-input>
+        </div>
+      </div>
+      <!--////////////////////////////////////////////////////////-->
+      <!--<div class="editMode">
+              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
+                <i class="el-icon-plus"></i>
+              </el-upload>
+              <el-dialog v-model="dialogVisible" size="tiny">
+                <img width="100%" :src="dialogImageUrl" alt>
+              </el-dialog>
+            </div>-->
+      <!--////////////////////////////////////////////////////////-->
+      <div v-if="presentMode" class="btns">
+        <el-button @click="editProfile" type="primary">
+          <i class="el-icon-edit"></i> Edit</el-button>
+        <el-button @click="goToSettings" type="primary">
+          <i class="el-icon-setting"></i> Settings</el-button>
       </div>
       <div v-else class="btns">
         <el-button @click="commitChange" type="primary"> Save</el-button>
         <el-button @click="cancel" type="primary"> Cancel</el-button>
       </div>
     </div>
+  
   </section>
 </template>
 
@@ -95,33 +112,45 @@ export default {
         interests: this.$store.state.profile.interests,
         desc: this.$store.state.profile.desc,
         birthdate: this.$store.state.profile.birthdate,
-        isMale: this.$store.state.profile.isMale
-      }
+        isMale: this.$store.state.profile.isMale,
+        picUrl: this.$store.state.profile.picUrl
+      },
+      // dialogImageUrl: 'https://organicthemes.com/demo/profile/files/2012/12/profile_img.png',
+      // dialogVisible: false
     }
-  }
-  , methods: {
+  },
+  methods: {
     editProfile() {
       // this.$notify({
       //   title: 'Success',
       //   message: 'This is a success message',
       //   type: 'success'
       // });
-     // this.$router.push('/myprofile/edit')  
+      // this.$router.push('/myprofile/edit')  
       this.presentMode = !this.presentMode
     },
     commitChange() {
       // this.presentMode = !this.presentMode,
-      filterMatch
+      // filterMatch
       console.log(this.profile);
-      this.$store.dispatch('editFilterMatch', { filterMatch: filterMatch });
+      // this.$store.dispatch('editFilterMatch', { filterMatch: filterMatch });
+      this.$store.dispatch('editProfile', this.profile );
     },
     cancel() {
       this.presentMode = !this.presentMode
     },
-    goToSettings(){
-          this.$router.push('/myprofile/settings')  
+    goToSettings() {
+      this.$router.push('/myprofile/settings')
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+      console.log('in handleRemove function');
+    },
+    handlePictureCardPreview(file) {
+      console.log('in handlePictureCardPreview function');
+      // this.dialogImageUrl = file.url;
+      // this.dialogVisible = true;
     }
-
   }
 }
 </script>

@@ -128,7 +128,8 @@ export default {
           imgUrl: '',
           isMale: this.profile.isMale,
           interests: this.profile.interests,
-          desc: this.profile.desc
+          desc: this.profile.desc,
+          picUrl: ''
         },
         filtermap: {
           female: this.femalePref,
