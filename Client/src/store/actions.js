@@ -1,7 +1,7 @@
 import axios from 'axios';
 import io from 'socket.io-client'
 import router from '../router'
-const SERVER_URL = 'http://localhost:3003';
+const SERVER_URL = 'http://localhost:3003'
 
 var socket = io(SERVER_URL);
 
@@ -37,9 +37,9 @@ export default {
       context.dispatch('receiveMsg', msg)
     })
     socket.on('match', match => {
-      debugger;
       console.log(match);
       context.dispatch('match', match);
+      // window.prompt('you have a new match!')
     })
   },
   editProfile(context, profile) {
