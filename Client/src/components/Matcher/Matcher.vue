@@ -7,13 +7,13 @@
         <span class="age" v-if="nextUser">{{$store.getters.nextUserAge}}</span>
       </div>
       <!--<span class="age" v-if="nextUser ">{{nextUser.desc}}</span>
-          <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
+                              <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
     </p>
     <div class="btns">
-      <button @click="changeProfile(false) " class="unlike ">
+      <button @click="changeProfile(false)" class="unlike" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
         <i class="fa fa-times" aria-hidden="true"></i>
       </button>
-      <button @click="changeProfile(true) " class="like ">
+      <button @click="changeProfile(true) " class="like" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
         <i class="fa fa-heart" aria-hidden="true"></i>
       </button>
     </div>
@@ -32,6 +32,15 @@ export default {
   computed: {
     nextUser() {
       return this.$store.getters.nextUser;
+    },
+    isNextUser() {
+      {
+        if (this.nextUser === 'Nothing to show!') {
+          // console.log('isNextUser', this.$store.getters.nextUser);
+          return true;
+        }
+        return false;
+      }
     }
   },
   methods: {
@@ -49,6 +58,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.disableBtn {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .img-container {
   width: 100%;
 }

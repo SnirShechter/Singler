@@ -3,7 +3,7 @@
     <h1>
       <span class="theme">{{$store.state.profile.fName+ ' '+ $store.state.profile.lName}}</span>
     </h1>
-    <img :src="$store.state.profile.imgUrl"></img>
+    <img :src="$store.state.profile.imgUrl" class="imgProfile"></img>
     <div class="details">
       <div v-if="presentMode" class="editMode">
         <span class="theme">First Name</span>
@@ -137,6 +137,10 @@ export default {
   }
   p {
     display: inline;
+  }
+
+  .imgProfile{
+    max-width: 10px;
   }
 }
 </style>
