@@ -4,11 +4,11 @@
       <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
       <p :class="{details: !isShowingDetails}">
         <div>
-          <span class="big-txt" v-if="nextUser">{{this.nextUser.fName}}</span>
-          <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
+          <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
+          <span class="age" v-if="nextUser ">{{$store.getters.nextUserAge}}</span>
         </div>
-        <span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
-        <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>
+        <!--<span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
+        <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
       </p>
       <div class="btns">
         <button @click="changeProfile(false) " class="unlike ">X</button>
@@ -34,7 +34,7 @@ export default {
   methods: {
     changeProfile(isLiked) {
       console.log(isLiked)
-      // if (this.$store.state.usersToShow.length < 5) this.$store.dispatch('getUsersToShow', this.$store.state._id);
+      // if (this.$store.state.usersToShow.length === 1) this.$store.dispatch('getUsersToShow', this.$store.state._id);
       this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
     },
     showDetails() {

@@ -63,21 +63,20 @@ function dbConnect() {
 	});
 }
 
-// GETs a list
+// GETs a list of users
 app.get('/data/users/all/:id', function (req, res) {
-	const objType = 'users';
 	const userId = req.params.id;
 	dbConnect().then(db => {
-		const collection = db.collection(objType);
-		collection.find({}).toArray((err, objs) => {
+		const collection = db.collection('users');
+		collection.find({}).toArray((err, users) => {
 			if (err) {
-				cl('Cannot get you a list of ', err)
+				cl('Cannot get you a list of users ', err)
 				res.json(404, { error: 'not found' })
 			} else {
-				objs = filterUserProfiles(objs, userId);
-				if (typeof objs !== 'string') cl("Returning list of " + objs.length + " " + objType);
-				else cl('something went wrong. error: ' + objs)
-				res.json(objs);
+				users = filterUserProfiles(users, userId);
+				if (typeof users !== 'string') cl("Returning list of " + users.length + " users");
+				else cl('something went wrong. error: ' + users)
+				res.json(users);
 			}
 			db.close();
 		});
@@ -155,7 +154,7 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 		//add like to current user
 		collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "likes": { [likedUserId]: isLike } } })
 			.then((result) => { //check for match with other user
-				cl('got like checking match')
+				cl('got like,checking match')
 				// return check4Match(collection, objId, targetId, res);
 				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
 			}).then((matchResult) => { //update match
@@ -166,8 +165,21 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": userId } });
 						})
 						.then(() => {
+							buildClientMatches([userId, likedUserId])
+								.then(([likedUserMatch,userMatch]) => {
+									if(userId !== likedUserMatch._id) console.log(`/////////////////// ERROR: MATCHES SENT ARE OPPOSITE //////////////////////`)
+									res.json({ message: 'Updated like and found a match!', isMatch: true,match:userMatch })
+									console.log('built match for the other user')
+									console.log(likedUserMatch)
+									let connectionTarget = connections.find(connection => {
+										return likedUserId === connection.userId
+									})
+									if (connectionTarget) {
+										console.log('the matched user is connected, sending him a msg too!')
+										io.to(connectionTarget.socketId).emit('match', likedUserMatch)
+									}
+								});
 							db.close();
-							res.json({ message: 'Updated like and found a match!', isMatch: true })
 						});
 				} else res.json({ message: 'Updated like', isMatch: false });
 			})

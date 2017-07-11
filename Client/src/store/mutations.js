@@ -11,7 +11,7 @@ export default {
         state.filtermap = data.filtermap;
     },
     addUsers(state, users) {
-        state.usersToShow.push(...users);
+        state.usersToShow = users;
     },
     editProfile(state, profile) {
         state.profile = profile;
@@ -28,7 +28,7 @@ export default {
         state.likes.splice(idx, 1);
     },
     match(state, match) {
-        state.matches[match.targetId] = match;
+        state.matches.push(match);
     },
     unmatch(state, matchId) {
         delete state.matches[matchId];
@@ -40,7 +40,7 @@ export default {
         console.log(`pushing `, match)
         match.msgs.push(msg);
     },
-    addMsgHistory(state, {msgs,match}) {
+    addMsgHistory(state, { msgs, match }) {
         console.log(msgs)
         console.log(`added msgs to ${match._id}`);
         match.msgs = msgs;
@@ -53,9 +53,6 @@ export default {
     },
     setError(state) {
         state.numUnRegLogin++;
-    },
-    goToMatcher(state, val) {
-        state.toMatcher = val;
     }
 }
 

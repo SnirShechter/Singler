@@ -9,11 +9,7 @@ export default {
   register(context, user) {
     axios.post(`${SERVER_URL}/data/users`, user) // getting the new user
       .then((res) => {
-        context.commit('login', res.data)
-      })
-      .then(() => {
-        router.push('matcher');
-        context.dispatch('getUsersToShow', context.state._id);
+        context.dispatch('connectUser', res.data);
       })
       .catch((error) => {
         console.log(error);
@@ -24,26 +20,27 @@ export default {
     console.log(password);
     axios.post(`${SERVER_URL}/login`, { uName, password })
       .then((res) => {
-        console.log(res.data); // <-- console.log
-        context.commit('login', res.data);
-        context.commit('goToMatcher', true);
-        console.log(res.data);
-        socket.emit('identify', res.data._id)
-        socket.on('message', msg => {
-          context.dispatch('receiveMsg', msg)
-        })
+        context.dispatch('connectUser', res.data);
       })
-      .then(() => {
-        context.dispatch('getUsersToShow', context.state._id)
-      }
-      )
       .catch((error) => {
         console.log(error); // <-- console.log
-        // console.log('SOMETHING WENT TERRIBLY BAD');
         context.commit('setError');
-        context.commit('goToMatcher', false);
         console.log('cannot login, please register!');
       })
+  },
+  connectUser(context, user) {
+    context.commit('login', user);
+    context.dispatch('getUsersToShow', user._id)
+    router.push('matcher');
+    socket.emit('identify', user._id)
+    socket.on('message', msg => {
+      context.dispatch('receiveMsg', msg)
+    })
+    socket.on('match', match => {
+      debugger;
+      console.log(match);
+      context.dispatch('match', match);
+    })
   },
   editProfile(context, profile) {
     axios.put(`${SERVER_URL}/users/` + context.state._id, profile)
@@ -68,6 +65,7 @@ export default {
   getUsersToShow(context, id) {
     axios.get(`${SERVER_URL}/data/users/all/${id}`)
       .then((res) => {
+        console.log(res.data)
         context.commit('addUsers', res.data)
       })
   },
@@ -77,9 +75,7 @@ export default {
     axios.put(`${SERVER_URL}/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
         console.log(res.data.message)
-        if (res.data.isMatch) {
-          context.dispatch('match', targetId, context.getters.nextUser.profile);
-        }
+        if (res.data.match) context.dispatch('match', res.data.match);
       })
       .catch((error) => {
         console.log(error);
@@ -87,8 +83,7 @@ export default {
         console.log('SOMETHING WENT TERRIBLY BAD')
       })
   },
-  match(context, targetId, targetProfile) {
-    var match = { targetId, targetProfile, msgs: [] };
+  match(context, match) {
     context.commit('match', match);
     console.log('You have a new match!!!');
   },

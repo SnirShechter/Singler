@@ -11,6 +11,7 @@ export default {
         return state.profile.isMale ? 'Male' : 'Female';
     },
     nextUser(state, getters) {
+        console.log(state.usersToShow)
         if (!state.usersToShow[0]) return 'Nothing to show!'
         return state.usersToShow[0];
     },
