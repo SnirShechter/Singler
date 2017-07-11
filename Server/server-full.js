@@ -339,6 +339,8 @@ io.on('connection', socket => {
 		}
 	});
 	socket.on('message', msg => {
+		console.log('message received!')
+		console.log(msg)
 		let connectionTarget = connections.find(connection => {
 			return msg.to === connection.userId
 		})
