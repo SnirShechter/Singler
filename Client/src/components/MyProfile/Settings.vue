@@ -29,6 +29,10 @@
 <script>
 export default {
   name: 'match',
+  created: {
+
+
+  },
   data() {
     return {
       female: false,
@@ -39,15 +43,26 @@ export default {
   },
   computed: {
     femalePref() {
-      if (this.prefs.genderPref == 1)
+      if (this.genderPref == 1)
         return false;
       return true;
     },
     malePref() {
-      if (this.prefs.genderPref == 2)
+      if (this.genderPref == 2)
         return false;
       return true;
     }
+  },
+  watch: {
+    genderPref: function (val) {
+      if (this.$store.state.filtermap.female === true && this.$store.state.filtermap.male === true)
+        return 3;
+      else if (this.$store.state.filtermap.female === 2)
+        return 2;
+      else
+        return 1;
+    }
+    //msgService.onTyping();
   },
   methods: {
     submit() {
@@ -57,12 +72,11 @@ export default {
         minAge: ageRange[0],
         maxAge: ageRange[1]
       }
-      console.log(1);
-      this.$store.dispatch('editFilterMatch', { profile: this.profile });
+      this.$store.dispatch('editFilterMatch', { filtermatch: this.filtermatch });
     },
     cancel() {
       this.$router.push('/myprofile')
-    }
+    },
   }
 }
 </script>
