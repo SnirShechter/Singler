@@ -54,7 +54,7 @@ export default {
     setError(state) {
         state.numUnRegLogin++;
     },
-    setMatchMsg(state) {
+    notifyMatch(state) {
         state.isNewMatch = false;
     }
 }
