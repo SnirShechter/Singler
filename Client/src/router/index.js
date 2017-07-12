@@ -7,6 +7,7 @@ import register from '@/components/Home/Register'
 import matcher from '@/components/Matcher/Matcher'
 import matches from '@/components/Matches/Matches'
 import chat from '@/components/Matches/Chat'
+import loader from '@/components/General/Loader'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import 'font-awesome/css/font-awesome.css'
@@ -52,9 +53,10 @@ export default new Router({
       name: 'Chat',
       component: chat
     },
-    { path: '/myprofile/settings',
-      settings: 'Settings',
-      component: settings
+    {
+      path: '/loader',
+      name: 'Loader',
+      component: loader
     }
   ],
   mode: 'history'

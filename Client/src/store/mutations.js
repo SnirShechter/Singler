@@ -2,13 +2,13 @@ import singlerService from '../services/singler.service'
 // snir : ITS NOT WORKING, JUST A SKETCH
 export default {
     login(state, data) {
-        console.log(data);
         state._id = data._id;
         state.uName = data.uName;
         state.profile = data.profile;
         state.likes = data.likes;
         state.matches = data.matches;
         state.filtermap = data.filtermap;
+        localStorage.setItem('login', JSON.stringify({ uName: data.uName, password: data.password }))
     },
     addUsers(state, users) {
         state.usersToShow = users;

@@ -14,6 +14,13 @@ import navbar from './components/General/Navbar'
 
 export default {
   name: 'app',
+  created() {
+    var login = JSON.parse(localStorage.getItem('login'))
+    if (login) {
+      this.$router.push('/loader')
+      this.$store.dispatch('login', login)
+    }
+  },
   data() {
     return {
       newMatch: this.$store.state.isNewMatch
