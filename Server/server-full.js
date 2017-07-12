@@ -293,6 +293,30 @@ app.post('/login', function (req, res) {
 	});
 });
 
+// deletes all likes and matches of a single user
+app.get('/delete/likesmatches/:id', function (req, res) {
+	var query = { _id: req.params.id };
+	var update = 'update';
+	cl(`Deleting likes and matches of ${query}`);
+	if (query._id === 'all') {
+		query = {};
+		update += 'Many';
+	}
+	dbConnect().then((db) => {
+		db.collection('users')[update](query, { $set: { likes: [], matches: [] } }, function (err, user) {
+			if (err) {
+				cl(`///// ERROR \\\\\ `);
+				cl(`Did not successfuly delete all likes and matches of ${query}`);
+				res.json(`Did not successfuly delete all likes and matches of ${query}`)
+			} else {
+				cl(`Successfuly Deleted all likes and matches of ${query}`);
+				res.json(`Successfuly Deleted all likes and matches of ${query}`);
+			}
+			db.close();
+		});
+	});
+});
+
 // DELETE???
 app.get('/logout', function (req, res) {
 	req.session.reset();
@@ -342,7 +366,7 @@ io.on('connection', socket => {
 	})
 	socket.on('disconnect', function () {
 		let idx = connections.findIndex(connection => socket.id === connection.socketId)
-		console.log(`SOCKET: ${connections[idx].userId} user disconnected`)
+		// console.log(`SOCKET: ${connections[idx].userId} user disconnected`)
 		if (idx !== -1) {
 			connections.splice(idx, 1)
 		}
