@@ -85,7 +85,7 @@ export default {
   },
   match(context, match) {
     context.commit('match', match);
-    context.commit('sentMatch');
+    context.commit('notifyMatch');
     console.log('You have a new match!!!');
   },
   unmatch(context, matchId) {

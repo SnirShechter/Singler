@@ -14,7 +14,7 @@ import chat from './Chat'
 export default {
   name: 'Matches',
   beforeCreate() {
-    if (!this.$store.state.user) {
+    if (!this.$store.state._id) {
       this.$message.error('You are not logged in!');
       this.$router.push('/')
     }
