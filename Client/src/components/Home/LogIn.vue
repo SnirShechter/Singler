@@ -53,7 +53,7 @@ export default {
         showErrorIfNotReg(newVal) {
             this.$notify.error({
                 title: 'Error',
-                message: 'Cannot login, please register!!!'
+                message: 'invalid password or username'
             })
         },
         goToMatcherScreen() {
