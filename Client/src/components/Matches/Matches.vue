@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     selectMatch(match) {
-      console.log('selecting match : ', match)
+      // console.log('selecting match : ', match)
       this.selected = match;
       this.$store.dispatch('getAllMatchMsgs', this.selected)
       this.toggleChat();

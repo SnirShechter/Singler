@@ -30,7 +30,7 @@ export default {
     newMatch() {
       if (newMatch) {
         this.$message({
-          message: 'Congrats, this is a success message.',
+          message: 'Congrats, this is a match',
           type: 'success'
         })
       };

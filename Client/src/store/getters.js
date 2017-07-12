@@ -11,16 +11,16 @@ export default {
         return state.profile.isMale ? 'Male' : 'Female';
     },
     nextUser(state, getters) {
-        console.log(state.usersToShow)
+        // console.log(state.usersToShow)
         if (!state.usersToShow[0]) return 'Nothing to show!'
         return state.usersToShow[0];
     },
     nextUserAge(state, getters) {
         if (!state.usersToShow[0]) return 'Nothing to show!'
         var ageInMilliseconds = (Date.now() - new Date(getters.nextUser.birthdate).getTime());
-        console.log(ageInMilliseconds);
+        // console.log(ageInMilliseconds);
         var age = ageInMilliseconds / (1000 * 60 * 60 * 24 * 365);
-        console.log(age);
+        // console.log(age);
         return age.toFixed(1);
     },
     getMatches(state, getters) {

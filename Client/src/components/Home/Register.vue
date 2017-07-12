@@ -137,7 +137,7 @@ export default {
           maxAge: this.filtermap.ageRange[1]
         }
       }
-      console.log(user); // <----------- CONSOLE.LOG
+      // console.log(user); // <----------- CONSOLE.LOG
       if (this.prefs.repeatPassword === user.password) {
         this.$store.dispatch('register', user)
       }

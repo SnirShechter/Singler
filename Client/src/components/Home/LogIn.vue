@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         login() {
-            console.log(this.username, this.password);
+            // console.log(this.username, this.password);
             this.$store.dispatch('login', { uName: this.username, password: this.password })
         },
         sendMsg() {
@@ -35,7 +35,7 @@ export default {
         keymonitor(event) {
             // console.log(event.key);
             if (event.key === "Enter") {
-                console.log("enter key was pressed!");
+                // console.log("enter key was pressed!");
                 // console.log('the id of the input was: ' + event.currentTarget.id);
                 this.login();
             }
@@ -53,7 +53,7 @@ export default {
         showErrorIfNotReg(newVal) {
             this.$notify.error({
                 title: 'Error',
-                message: 'invalid password or username'
+                message: 'invalid password or usernamea'
             })
         },
         goToMatcherScreen() {

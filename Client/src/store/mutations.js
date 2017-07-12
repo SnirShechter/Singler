@@ -35,17 +35,17 @@ export default {
     },
     addMsg(state, msg) {
         let matchedUserId = (msg.toId === state._id) ? msg.fromId : msg.toId;
-        console.log(`finding ` + matchedUserId)
+        // console.log(`finding ` + matchedUserId)
         let match = state.matches.find(match => match._id === matchedUserId);
-        console.log(`pushing `, match)
+        // console.log(`pushing `, match)
         match.msgs.push(msg);
     },
     addMsgHistory(state, { msgs, match }) {
-        console.log(msgs)
-        console.log(`added msgs to ${match._id}`);
+        // console.log(msgs)
+        // console.log(`added msgs to ${match._id}`);
         match.msgs = msgs;
-        console.log(msgs);
-        console.log(match);
+        // console.log(msgs);
+        // console.log(match);
     },
     errorMsg(state, msg) {
         const currMatch = singlerService.findMatchById(state.matches, matchId)
