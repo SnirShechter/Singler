@@ -6,8 +6,8 @@
         <el-input class="sign-in" type="text" placeholder="Username" v-model="username"></el-input>
         <el-input class="sign-in" type="password" placeholder="Password" v-model="password"></el-input>
         <el-button class="sign-in" type="primary" @click="login">Log in</el-button>
-        <el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
-        <el-button class="sign-in facebook" type="primary" @click="sendMsg">Send dummy msg</el-button>
+        <!--<el-button class="sign-in facebook" type="primary">Sign in with Facebook</el-button>
+        <el-button class="sign-in facebook" type="primary" @click="sendMsg">Send dummy msg</el-button>-->
         <p>Don't have an account yet?
             <router-link to="/register"> Register now! </router-link>
         </p>
