@@ -113,35 +113,6 @@ app.get('/data/:objType/:id', function (req, res) {
 		});
 });
 
-// GET matches per user
-// app.get('/data/stam/matches/:id', function (req, res) {
-// 	const objId = req.params.id;
-// 	cl(`Getting you the matches for user id: ${objId}`);
-// 	dbConnect()
-// 		.then((db) => {
-// 			const collection = db.collection('users');
-// 			let _id;
-// 			try {
-// 				_id = new mongodb.ObjectID(objId);
-// 			}
-// 			catch (e) {
-// 				return Promise.reject(e);
-// 			}
-// 			return collection.findOne({ _id: _id })
-// 				.then((obj) => {
-// 					cl("Returning the matches for " + objId);
-// 					res.json(obj.matches);
-// 					db.close();
-// 				})
-// 				.catch(err => {
-// 					cl('Cannot get you that ', err)
-// 					res.status(404).json({ error: 'not found' });
-// 					db.close();
-// 				})
-
-// 		});
-// });
-
 app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 	const userId = req.params.id;
 	const likedUserId = req.params.trgId;
@@ -151,14 +122,13 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
-		//add like to current user
+		// add like to current user
 		collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "likes": { [likedUserId]: isLike } } })
-			.then((result) => { //check for match with other user
-				cl('got like,checking match')
-				// return check4Match(collection, objId, targetId, res);
+			.then((result) => {
+				cl('Like received,checking for a match')
 				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
-			}).then((matchResult) => { //update match
-				if (matchResult) { //found match
+			}).then((matchResult) => {
+				if (matchResult) {
 					cl('Found a match!');
 					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": likedUserId } })
 						.then(() => {
@@ -167,21 +137,14 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 						.then(() => {
 							buildClientMatches([likedUserId, userId])
 								.then((matches) => {
-									console.log(matches);
-									// [matches[0], matches[1]] = [matches[1], matches[0]]
-									// console.log(matches)
-									// if (userId === matches[0]._id) var user
-									// var userMatch = matches[1]
-									// var likedUserMatch = matches[0]
-									// console.log(`/////////////////// ERROR: MATCHES SENT ARE OPPOSITE //////////////////////`)
-									console.log(`/////////////////// MATCHING //////////////////////`)
+									// in case matches are mixed
+									if (matches[0]._id !== userId)[matches[0], matches[1]] = [matches[1], matches[0]]
 									res.json({ message: 'Updated like and found a match!', isMatch: true, match: matches[0] })
-									console.log(matches[1])
 									let connectionTarget = connections.find(connection => {
 										return likedUserId === connection.userId
 									})
 									if (connectionTarget) {
-										console.log('the matched user is connected, sending him a msg too!')
+										cl('Matched user is connected, sending him a message too!')
 										io.to(connectionTarget.socketId).emit('match', matches[1])
 									}
 								});
@@ -190,8 +153,9 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 				} else res.json({ message: 'Updated like', isMatch: false });
 			})
 			.catch(err => {
-				cl('Cannot get you that ', err)
-				res.status(404).json({ error: 'not found' });
+				cl(`///// ERROR \\\\\ `);
+				cl('Like/match error,Cannot connect to DB ', err)
+				res.status(404).json({ error: 'Could not connect to DB' });
 				db.close();
 			});
 	});
@@ -307,7 +271,7 @@ app.get('/data/chat/messages/:fromId/:toId', function (req, res) {
 
 // Basic Login/Logout/Protected assets
 app.post('/login', function (req, res) {
-	console.log(`login attempt with uName:${req.body.uName}, password:${req.body.password}`);
+	cl(`Login attempt with uName:${req.body.uName}, password:${req.body.password}`);
 	dbConnect().then((db) => {
 		db.collection('users').findOne({ uName: req.body.uName, password: req.body.password }, function (err, user) {
 			if (user) {
@@ -319,6 +283,7 @@ app.post('/login', function (req, res) {
 						res.json(user)
 					});
 			} else {
+				cl(`///// ERROR \\\\\ `);
 				cl('Login NOT Succesful');
 				req.session.user = null;
 				res.status(403).json({ error: 'Login failed' })
@@ -328,11 +293,12 @@ app.post('/login', function (req, res) {
 	});
 });
 
+// DELETE???
 app.get('/logout', function (req, res) {
 	req.session.reset();
 	res.end('Loggedout');
 });
-
+// DELETE???
 function requireLogin(req, res, next) {
 	if (!req.session.user) {
 		cl('Login Required');
@@ -341,13 +307,14 @@ function requireLogin(req, res, next) {
 		next();
 	}
 };
+// DELETE???
 app.get('/protected', requireLogin, function (req, res) {
 	res.end('User is loggedin, return some data');
 });
 
 
 
-
+// DELETE???
 // Kickup our server 
 // Note: app.listen will not work with cors and the socket
 // app.listen(3003, function () {
@@ -367,37 +334,35 @@ http.listen(3003, function () {
 
 var connections = [];
 io.on('connection', socket => {
-	console.log('a user connected');
+	console.log('SOCKET: user connected');
 	socket.on('identify', userId => {
 		connections.push({ socketId: socket.id, userId })
 		console.log(`identified socket connection as: ${userId}`);
 		console.log(connections)
 	})
 	socket.on('disconnect', function () {
-		console.log('user disconnected')
 		let idx = connections.findIndex(connection => socket.id === connection.socketId)
+		console.log(`SOCKET: ${connections[idx].userId} user disconnected`)
 		if (idx !== -1) {
-			console.log(`id: ${connections[idx].socketId}`);
 			connections.splice(idx, 1)
 		}
 	});
 	socket.on('message', msg => {
-		console.log('message received!')
-		console.log(msg)
-
+		console.log('SOCKET: Message received!')
 		dbConnect().then((db) => {
 			const collection = db.collection('messages');
-
 			collection.insert(msg, (err, result) => {
 				if (err) {
-					cl(`Couldnt insert message `, err)
+					cl(`///// ERROR \\\\\ `);
+					cl(`SOCKET: couldn't insert message to DB `, err)
 				} else {
-					cl('message added');
+					cl('SOCKET: Message added to DB');
 				}
 				db.close();
 			})
 		}).catch(err => {
-			cl('Cannot connect to db... ', err)
+			cl(`///// ERROR \\\\\ `);
+			cl('SOCKET: cannot connect to db to add message ', err)
 		});
 
 		let connectionTarget = connections.find(connection => {
@@ -407,19 +372,13 @@ io.on('connection', socket => {
 	})
 });
 
-// socket.on('chat message', function (msg) {
-// 	console.log('message: ' + msg);
-// 	io.emit('chat message', msg);
-// });
-
 function filterUserProfiles(users, id) {
 	var idx = users.findIndex(user => {
-		console.log(user._id)
 		return user._id == id
 	});
 	if (idx === -1) {
-		console.log(idx)
-		console.log(id)
+		cl(`///// ERROR \\\\\ `);
+		cl(`filterUserProfiles: recieved an invalid ID`);
 		return 'Recieved an invalid ID'
 	}
 	// destructuring the filtermap + splicing its own user object
@@ -462,44 +421,36 @@ function birthdateToAge(birthdate) {
 }
 
 function buildClientMatches(ServerMatches) {
-	console.log(`building client matches with matches:`);
-	console.log(ServerMatches);
-
 	if (ServerMatches.length == 0) return new Promise((res, rej) => res([]));
 	return new Promise((resolve, reject) => {
 		getSomeUsers(ServerMatches)
 			.then((users) => {
-				console.log(`before map IDs : ` + users);
 				let userProfiles = users.map(user => {
 					user.profile._id = user._id;
 					user.profile.msgs = [];
 					return user.profile;
 				})
-				console.log('RESOLVING PROMISE')
-				console.log(userProfiles);
 				resolve(userProfiles);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => {
+				cl(`///// ERROR \\\\\ `);
+				console.log('buildClientMatches: getSomeUsers return a rejected promise')
+			});
 	})
 }
 
 function getSomeUsers(userIds) {
-	console.log('userIds on getSomeUsers ' + userIds)
-	console.log('type of ' + typeof userIds)
 	let mongodbUserIds = userIds.map(userId => new mongodb.ObjectID(userId))
 	console.log(mongodbUserIds)
 	return new Promise((resolve, reject) => {
 		dbConnect().then(db => {
 			const collection = db.collection('users');
-			console.log('getsomeusers inside dbconnect' + userIds)
 			collection.find({ _id: { $in: mongodbUserIds } }).toArray((err, users) => {
-				console.log('getsomeusers inside coll find' + users)
 				if (err) {
-					cl('Cannot get you the users you requested. error: ', err)
+					cl(`///// ERROR \\\\\ `);
+					cl('getSomeUsers: Cannot get users from DB', err)
 					reject(err);
 				} else {
-					console.log('getsomeusers before return users :')
-					console.log(users);
 					db.close();
 					resolve(users);
 				}
