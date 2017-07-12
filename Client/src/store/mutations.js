@@ -8,7 +8,7 @@ export default {
         state.likes = data.likes;
         state.matches = data.matches;
         state.filtermap = data.filtermap;
-        localStorage.setItem('login', JSON.stringify({ uName: data.uName, password: data.password }))
+        localStorage.setItem('login', JSON.stringify({ uName: data.uName, token: data.password }))
     },
     addUsers(state, users) {
         state.usersToShow = users;
