@@ -67,6 +67,10 @@
         <el-input v-model="profile.desc"></el-input>
       </div>
   
+      <div class="editMode" v-if="!presentMode">
+        <upload-img @imageUploaded="imageUploaed"></upload-img>
+      </div>
+  
       <div v-if="presentMode" class="btns">
         <el-button @click="editProfile" type="primary">
           <i class="el-icon-edit"></i> Edit</el-button>
@@ -82,6 +86,9 @@
 </template>
 
 <script>
+
+import UploadImg from '../General/upload'
+
 import moment from 'moment'
 export default {
   name: 'MyProfile',
@@ -99,13 +106,17 @@ export default {
     }
   },
   methods: {
+    imageUploaed(url) {
+      console.log(url);
+      this.profile.imgUrl = url;
+    },
     editProfile() {
       this.presentMode = !this.presentMode
     },
     commitChange() {
       // this.presentMode = !this.presentMode,
       // filterMatch
-      // console.log(this.profile);
+      console.log(this.profile);
       this.presentMode = !this.presentMode,
         this.$store.dispatch('editProfile', this.profile)
 
@@ -117,7 +128,9 @@ export default {
     goToSettings() {
       this.$router.push('/myprofile/settings')
     }
-
+  },
+  components: {
+    UploadImg
   }
 }
 </script>
