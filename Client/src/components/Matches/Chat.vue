@@ -105,7 +105,7 @@ export default {
     sendMsg() {
       moment().format('h:mm A')
       let [fromId, toId, txt, date] = [this.$store.state._id, this.match._id, this.txt, Date.now()]
-      console.log(`from:${fromId},to:${toId}`)
+      // console.log(`from:${fromId},to:${toId}`)
       let msg = { txt, fromId, toId, date };
       this.$store.dispatch('sendMsg', msg);
       this.txt = '';
@@ -114,7 +114,7 @@ export default {
       this.$emit('toggleChat');
     },
     printMatch() {
-      console.log(match);
+      // console.log(match);
     },
     msgClass(msg) {
       return (msg.fromId === this.match._id) ? 'received' : 'sent';

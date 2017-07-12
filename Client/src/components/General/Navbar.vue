@@ -25,7 +25,7 @@ export default {
         this.$router.push(location)
       } else {
         this.$message.error('You are not logged in!');
-        console.log('you are not logged in!')
+        // console.log('you are not logged in!')
         this.$router.push('/')
       }
     }

@@ -1,27 +1,21 @@
 <template>
   <section class="matcher">
-    <!--<div class="img-container">
-      <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
-      <p :class="{details: !isShowingDetails}">
-        <div>
-          <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
-          <span class="age" v-if="nextUser ">{{$store.getters.nextUserAge}}</span>
-        </div>
-        <!--<span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
-            <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
-      <!--</p>
-      <div class="btns">
-        <button @click="changeProfile(false) " class="unlike ">X</button>
-        <button @click="changeProfile(true) " class="like ">V</button>-->
-    <img :src="nextUser.imgUrl" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
-    <p :class="{details: !isShowingDetails}">
-      <div>
-        <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
-        <span class="age" v-if="nextUser">{{$store.getters.nextUserAge}}</span>
-      </div>
-      <!--<span class="age" v-if="nextUser ">{{nextUser.desc}}</span>
-                              <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
-    </p>
+  
+    <img :src="nextUser.imgUrl" :class="{'img-smaller': !isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
+    <div :class="{details: !isShowingDetails, 'left':  isShowingDetails}">
+      <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
+      <span class="age" v-if="nextUser">{{$store.getters.nextUserAge}}</span>
+      <br>
+  
+      <span class="age"  v-if="isShowingDetails">
+        <span class="theme">Description</span>{{nextUser.desc}}</span>
+      <br>
+ 
+  
+      <span class="age"  v-if="isShowingDetails">
+        <span class="theme">Interests</span>{{nextUser.interests}}</span>
+      <!--<span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
+    </div>
     <div class="btns">
       <button @click="changeProfile(false)" class="unlike" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
         <i class="fa fa-times" aria-hidden="true"></i>
@@ -67,7 +61,7 @@ export default {
       console.log(isLiked)
       // if (this.$store.state.usersToShow.length === 1) this.$store.dispatch('getUsersToShow', this.$store.state._id);
       this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
-      console.log('Taly: ', this.nextUser);
+      // console.log('Taly: ', this.nextUser);
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;
@@ -82,6 +76,10 @@ export default {
   opacity: 0.6;
 }
 
+.left {
+  text-align: left
+}
+
 .img-container {
   width: 100%;
 }
@@ -90,8 +88,14 @@ export default {
   width: 80%;
 }
 
+// .space {
+//   margin: 2em 0;
+//   padding: 2em 0;
+//   height: 1em;
+// }
+
 .btns {
-  position: absolute;
+  position: fixed;
   bottom: 50px;
   left: 50%;
   transform: translate(-50%);
