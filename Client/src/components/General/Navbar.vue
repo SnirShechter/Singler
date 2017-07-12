@@ -1,14 +1,14 @@
 <template>
   <section class="navbar">
-    <router-link to="/myprofile">
-      <img src="../../assets/profile.png"></img>
-    </router-link>
-    <router-link to="/matcher">
-      <img src="../../assets/heart.png"></img>
-    </router-link>
-    <router-link to="/matches">
-      <img src="../../assets/chat.png"></img>
-    </router-link>
+    <!--<router-link to="/myprofile">-->
+    <img src="../../assets/profile.png" @click="goToPage('/myprofile')"></img>
+    <!--</router-link>
+            <router-link to="/matcher">-->
+    <img src="../../assets/heart.png" @click="goToPage('/matcher')"></img>
+    <!--</router-link>
+            <router-link to="/matches">-->
+    <img src="../../assets/chat.png" @click="goToPage('/matches')"></img>
+    <!--</router-link>-->
   </section>
 </template>
 
@@ -17,6 +17,17 @@ export default {
   name: 'Navbar',
   data() {
     return {
+    }
+  },
+  methods: {
+    goToPage(location) {
+      if (this.$store.state.user) {
+        this.$router.push(location)
+      } else {
+        this.$message.error('You are not logged in!');
+        console.log('you are not logged in!')
+        this.$router.push('/')
+      }
     }
   }
 }
@@ -37,7 +48,10 @@ export default {
   img {
     max-width: 5em;
     height: 90%;
-    margin:5px;
+    margin: 5px;
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 </style>

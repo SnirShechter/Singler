@@ -13,6 +13,12 @@ import chatPreview from './ChatPreview'
 import chat from './Chat'
 export default {
   name: 'Matches',
+  beforeCreate() {
+    if (!this.$store.state.user) {
+      this.$message.error('You are not logged in!');
+      this.$router.push('/')
+    }
+  },
   data() {
     return {
       selected: null,

@@ -8,7 +8,7 @@
           <span class="age" v-if="nextUser ">{{$store.getters.nextUserAge}}</span>
         </div>
         <!--<span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
-        <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
+            <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
       </p>
       <div class="btns">
         <button @click="changeProfile(false) " class="unlike ">X</button>
@@ -21,6 +21,12 @@
 <script>
 export default {
   name: 'matcher',
+  beforeCreate() {
+    if (!this.$store.state.user) {
+      this.$message.error('You are not logged in!');
+      this.$router.push('/')
+    }
+  },
   data() {
     return {
       isShowingDetails: false

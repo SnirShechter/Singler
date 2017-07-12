@@ -85,7 +85,11 @@
 import moment from 'moment'
 export default {
   name: 'MyProfile',
-  created() {
+  beforeCreate() {
+    if (!this.$store.state.user) {
+      this.$message.error('You are not logged in!');
+      this.$router.push('/')
+    }
   },
   data() {
     return {
@@ -93,8 +97,8 @@ export default {
       datePresent: moment(this.$store.state.profile.birthdate).format('L'),
       profile: JSON.parse(JSON.stringify(this.$store.state.profile))
     }
-  }
-  , methods: {
+  },
+  methods: {
     editProfile() {
       this.presentMode = !this.presentMode
     },

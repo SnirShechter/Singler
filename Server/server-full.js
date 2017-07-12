@@ -165,18 +165,24 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 							return collection.updateOne({ _id: new mongodb.ObjectID(likedUserId) }, { $addToSet: { "matches": userId } });
 						})
 						.then(() => {
-							buildClientMatches([userId, likedUserId])
-								.then(([likedUserMatch, userMatch]) => {
-									if (userId !== likedUserMatch._id) console.log(`/////////////////// ERROR: MATCHES SENT ARE OPPOSITE //////////////////////`)
-									res.json({ message: 'Updated like and found a match!', isMatch: true, match: userMatch })
-									console.log('built match for the other user')
-									console.log(likedUserMatch)
+							buildClientMatches([likedUserId, userId])
+								.then((matches) => {
+									console.log(matches);
+									// [matches[0], matches[1]] = [matches[1], matches[0]]
+									// console.log(matches)
+									// if (userId === matches[0]._id) var user
+									// var userMatch = matches[1]
+									// var likedUserMatch = matches[0]
+									// console.log(`/////////////////// ERROR: MATCHES SENT ARE OPPOSITE //////////////////////`)
+									console.log(`/////////////////// MATCHING //////////////////////`)
+									res.json({ message: 'Updated like and found a match!', isMatch: true, match: matches[0] })
+									console.log(matches[1])
 									let connectionTarget = connections.find(connection => {
 										return likedUserId === connection.userId
 									})
 									if (connectionTarget) {
 										console.log('the matched user is connected, sending him a msg too!')
-										io.to(connectionTarget.socketId).emit('match', likedUserMatch)
+										io.to(connectionTarget.socketId).emit('match', matches[1])
 									}
 								});
 							db.close();
@@ -233,7 +239,7 @@ app.put('/data/users', upload.single('file'), function (req, res) {
 	// }
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
-		collection.update({ _id }, { $set: { profile: profile }}, (err, result) => {
+		collection.updateOne({ _id }, { $set: { profile: profile } }, (err, result) => {
 			if (err) {
 				cl(`Couldnt update/edit a user`, err)
 				res.json(500, { error: 'Failed to update/edit the user' })
