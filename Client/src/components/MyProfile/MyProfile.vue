@@ -101,8 +101,10 @@ export default {
     commitChange() {
       // this.presentMode = !this.presentMode,
       // filterMatch
-      console.log(this.profile);
-      this.$store.dispatch('editProfile', this.profile)
+      // console.log(this.profile);
+      this.presentMode = !this.presentMode,
+        this.$store.dispatch('editProfile', this.profile)
+
       // this.$store.dispatch('editFilterMatch', { filterMatch });
     },
     cancel() {
@@ -139,7 +141,7 @@ export default {
     display: inline;
   }
 
-  .imgProfile{
+  .imgProfile {
     max-width: 10px;
   }
 }
