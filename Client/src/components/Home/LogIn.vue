@@ -69,7 +69,7 @@ export default {
     display: flex;
     flex-flow: column wrap;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 h1 {
