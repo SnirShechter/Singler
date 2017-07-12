@@ -1,8 +1,7 @@
 <template>
     <section class="matches">
         <li>
-            <!--<img class="profile" :src="match.matchedProfile.imgUrl">-->
-    
+            <img class="profile" :src="match.imgUrl">
             <div class="msg-details">
                 <p>
                     <span class="theme">{{match.fName }} {{match.lName }} </span>

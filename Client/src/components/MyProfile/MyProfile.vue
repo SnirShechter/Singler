@@ -3,7 +3,7 @@
     <h1>
       <span class="theme">{{$store.state.profile.fName+ ' '+ $store.state.profile.lName}}</span>
     </h1>
-    <img src="../../assets/profile.png"></img>
+    <img :src="$store.state.profile.imgUrl" class="imgProfile"></img>
     <div class="details">
       <div v-if="presentMode" class="editMode">
         <span class="theme">First Name</span>
@@ -105,8 +105,10 @@ export default {
     commitChange() {
       // this.presentMode = !this.presentMode,
       // filterMatch
-      console.log(this.profile);
-      this.$store.dispatch('editProfile', this.profile)
+      // console.log(this.profile);
+      this.presentMode = !this.presentMode,
+        this.$store.dispatch('editProfile', this.profile)
+
       // this.$store.dispatch('editFilterMatch', { filterMatch });
     },
     cancel() {
@@ -141,6 +143,10 @@ export default {
   }
   p {
     display: inline;
+  }
+
+  .imgProfile {
+    max-width: 10px;
   }
 }
 </style>

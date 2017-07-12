@@ -30,7 +30,7 @@
                     <i class="el-icon-arrow-left" @click="backToMatches"></i>
                   </div>
                   <div class="avatar">
-                    <!--<img :src="match.imgUrl" alt="Avatar">-->
+                    <img :src="match.imgUrl" alt="Avatar">
                   </div>
                   <div class="name">
                     <span>{{match.fName }}</span>
@@ -79,7 +79,7 @@
                         <i class="el-icon-caret-right"></i>
                       </div>
                     </button>
-                    <button @click="printMatch">Print Match</button>
+                    <!--<button @click="printMatch">Print Match</button>-->
                   </form>
                 </div>
               </div>
@@ -608,24 +608,9 @@ export default {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Small Screens */
 
-@media (max-width: 768px) {
+// @media (max-width: 2000px) {
   .marvel-device.nexus5 {
     border-radius: 0;
     flex: none;
@@ -662,5 +647,5 @@ export default {
   .conversation .conversation-container {
     height: calc(100vh - 225px);
   }
-}
+// }
 </style>

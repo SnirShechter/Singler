@@ -1,6 +1,6 @@
 <template>
   <section class="matcher">
-    <div class="img-container">
+    <!--<div class="img-container">
       <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
       <p :class="{details: !isShowingDetails}">
         <div>
@@ -9,11 +9,27 @@
         </div>
         <!--<span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
             <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
-      </p>
+      <!--</p>
       <div class="btns">
         <button @click="changeProfile(false) " class="unlike ">X</button>
-        <button @click="changeProfile(true) " class="like ">V</button>
+        <button @click="changeProfile(true) " class="like ">V</button>-->
+    <img :src="nextUser.imgUrl" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
+    <p :class="{details: !isShowingDetails}">
+      <div>
+        <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
+        <span class="age" v-if="nextUser">{{$store.getters.nextUserAge}}</span>
       </div>
+      <!--<span class="age" v-if="nextUser ">{{nextUser.desc}}</span>
+                              <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
+    </p>
+    <div class="btns">
+      <button @click="changeProfile(false)" class="unlike" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </button>
+      <button @click="changeProfile(true) " class="like" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
+        <i class="fa fa-heart" aria-hidden="true"></i>
+      </button>
+    </div>
     </div>
   </section>
 </template>
@@ -35,6 +51,15 @@ export default {
   computed: {
     nextUser() {
       return this.$store.getters.nextUser;
+    },
+    isNextUser() {
+      {
+        if (this.nextUser === 'Nothing to show!') {
+          // console.log('isNextUser', this.$store.getters.nextUser);
+          return true;
+        }
+        return false;
+      }
     }
   },
   methods: {
@@ -42,6 +67,7 @@ export default {
       console.log(isLiked)
       // if (this.$store.state.usersToShow.length === 1) this.$store.dispatch('getUsersToShow', this.$store.state._id);
       this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
+      console.log('Taly: ', this.nextUser);
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;
@@ -51,6 +77,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.disableBtn {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .img-container {
   width: 100%;
 }
@@ -75,19 +106,22 @@ button {
   border-radius: 50%;
   text-align: center;
   background-color: white;
-  border: 2px solid gray;
+  border: 1px solid gray;
   width: 50px;
   height: 50px;
   font-weight: bold;
   font-size: 25px;
+  cursor: pointer;
 }
 
 .like {
-  color: lightgreen;
+  color: white;
+  background-color: lightgreen;
 }
 
 .unlike {
-  color: red;
+  background-color: red;
+  color: white;
 }
 
 img {
