@@ -1,5 +1,18 @@
 <template>
   <section class="matcher">
+    <!--<div class="img-container">
+      <img src="../../assets/userImgs/sample.jpg" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
+      <p :class="{details: !isShowingDetails}">
+        <div>
+          <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
+          <span class="age" v-if="nextUser ">{{$store.getters.nextUserAge}}</span>
+        </div>
+        <!--<span class="age" v-if="nextUser ">{{this.nextUser.desc}}</span>
+            <span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
+      <!--</p>
+      <div class="btns">
+        <button @click="changeProfile(false) " class="unlike ">X</button>
+        <button @click="changeProfile(true) " class="like ">V</button>-->
     <img :src="nextUser.imgUrl" :class="{'img-smaller': isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
     <p :class="{details: !isShowingDetails}">
       <div>
@@ -24,6 +37,12 @@
 <script>
 export default {
   name: 'matcher',
+  beforeCreate() {
+    if (!this.$store.state.user) {
+      this.$message.error('You are not logged in!');
+      this.$router.push('/')
+    }
+  },
   data() {
     return {
       isShowingDetails: false

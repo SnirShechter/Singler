@@ -29,9 +29,11 @@
 <script>
 export default {
   name: 'match',
-  created: {
-
-
+  beforeCreate() {
+    if (!this.$store.state.user) {
+      this.$message.error('You are not logged in!');
+      this.$router.push('/')
+    }
   },
   data() {
     return {
