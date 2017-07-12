@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     goToPage(location) {
-      if (this.$store.state.user) {
+      if (this.$store.state._id) {
         this.$router.push(location)
       } else {
         this.$message.error('You are not logged in!');

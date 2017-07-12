@@ -30,7 +30,7 @@
 export default {
   name: 'match',
   beforeCreate() {
-    if (!this.$store.state.user) {
+    if (!this.$store.state._id) {
       this.$message.error('You are not logged in!');
       this.$router.push('/')
     }
