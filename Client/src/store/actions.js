@@ -9,38 +9,36 @@ export default {
   register(context, user) {
     axios.post(`${SERVER_URL}/data/users`, user) // getting the new user
       .then((res) => {
+        res.data.password = user.password;
         context.dispatch('connectUser', res.data);
       })
       .catch((error) => {
         console.log(error);
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        console.log('Cannot connect to server, are you online?')
       })
   },
   login(context, { uName, password }) {
-    console.log(password);
     axios.post(`${SERVER_URL}/login`, { uName, password })
       .then((res) => {
+        res.data.password = password;
         context.dispatch('connectUser', res.data);
       })
       .catch((error) => {
-        console.log(error); // <-- console.log
+        console.log(error);
         context.commit('setError');
-        console.log('cannot login, please register!');
       })
   },
   connectUser(context, user) {
     context.commit('login', user);
     context.dispatch('getUsersToShow', user._id)
-    router.push('matcher');
     socket.emit('identify', user._id)
     socket.on('message', msg => {
       context.dispatch('receiveMsg', msg)
     })
     socket.on('match', match => {
-      console.log(match);
       context.dispatch('match', match);
-      // window.prompt('you have a new match!')
     })
+    router.push('matcher');
   },
   editProfile(context, profile) {
     axios.put(`${SERVER_URL}/data/users/`, { _id: context.state._id, profile })
@@ -49,7 +47,7 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        console.log('Cannot connect to server, are you online?')
       })
   },
   editFilterMatch(context, filterMatch) {
@@ -59,13 +57,12 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        console.log('Cannot connect to server, are you online?')
       })
   },
   getUsersToShow(context, id) {
     axios.get(`${SERVER_URL}/data/users/all/${id}`)
       .then((res) => {
-        console.log(res.data)
         context.commit('addUsers', res.data)
       })
   },
@@ -74,35 +71,29 @@ export default {
     context.commit('like', { targetId, isLiked });
     axios.put(`${SERVER_URL}/data/users/${context.state._id}/${targetId}/${isLiked}`)
       .then((res) => {
-        console.log(res.data.message)
         if (res.data.match) context.dispatch('match', res.data.match);
       })
       .catch((error) => {
         console.log(error);
         context.commit('unlike', targetId);
-        console.log('SOMETHING WENT TERRIBLY BAD')
+        console.log('Cannot connect to server, are you online?')
       })
   },
   match(context, match) {
     context.commit('match', match);
     context.commit('notifyMatch');
-    console.log('You have a new match!!!');
   },
   unmatch(context, matchId) {
     axios.delete('/matches/' + matchId)
       .then((res) => {
-        console.log(res.data);
         context.commit('unmatch', matchId);
       })
   },
   sendMsg(context, msg) {
     context.commit('addMsg', msg);
-    console.log('Msg sent!')
     socket.send(msg, (res) => {
-      console.log('Msg returned!')
-      console.log(res.data)
       if (msg.txt !== res.data.txt) {
-        console.log('Error, server did not receive the message')
+        console.log('Cannot connect to server, are you online?')
         context.commit('errorMsg', msg);
       }
     });
@@ -111,10 +102,8 @@ export default {
     context.commit('addMsg', msg);
   },
   getAllMatchMsgs(context, match) {
-    console.log(`getting all msgs from ${match._id} , sent id is ${context.state._id}`)
     axios.get(`${SERVER_URL}/data/chat/messages/${context.state._id}/${match._id}`)
       .then(res => {
-        console.log(res);
         context.commit('addMsgHistory', { msgs: res.data, match })
       })
   }
