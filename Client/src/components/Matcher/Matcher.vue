@@ -2,26 +2,36 @@
   <section class="matcher">
   
     <img :src="nextUser.imgUrl" :class="{'img-smaller': !isShowingDetails }" v-if="nextUser" @click="showDetails"></img>
-    <div :class="{details: !isShowingDetails, 'left':  isShowingDetails}">
+    <div v-if="isShowingDetails" class="details">
       <span class="big-txt" v-if="nextUser">{{nextUser.fName}}</span>
       <span class="age" v-if="nextUser">{{$store.getters.nextUserAge}}</span>
-      <br>
-  
-      <span class="age"  v-if="isShowingDetails">
-        <span class="theme">Description</span>{{nextUser.desc}}</span>
-      <br>
- 
-  
-      <span class="age"  v-if="isShowingDetails">
-        <span class="theme">Interests</span>{{nextUser.interests}}</span>
-      <!--<span class="age" v-if="nextUser ">{{this.$store.getters.nextUserAge}}</span>-->
     </div>
-    <div class="btns">
-      <button @click="changeProfile(false)" class="unlike" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
-        <i class="fa fa-times" aria-hidden="true"></i>
+    <div v-else class="left">
+      <span class="age " v-if="nextUser">
+        <span class="theme">name:</span> {{nextUser.fName}}</span>
+      <br>
+      <br>
+      <span class="age " v-if="nextUser ">
+        <span class="theme">age:</span> {{this.$store.getters.nextUserAge}}</span>
+      <br>
+      <br>
+      <span class="age">
+        <span class="theme">Description</span> {{nextUser.desc}}</span>
+      <br>
+      <br>
+  
+      <span class="age">
+        <span class="theme ">Interests</span> {{nextUser.interests}}</span>
+      <br>
+      <br>
+  
+    </div>
+    <div class="btns ">
+      <button @click="changeProfile(false) " class="unlike " :class="{ 'disableBtn': isNextUser} " :disabled="isNextUser ">
+        <i class="fa fa-times " aria-hidden="true "></i>
       </button>
-      <button @click="changeProfile(true) " class="like" :class="{'disableBtn': isNextUser}" :disabled="isNextUser">
-        <i class="fa fa-heart" aria-hidden="true"></i>
+      <button @click="changeProfile(true) " class="like " :class="{ 'disableBtn': isNextUser} " :disabled="isNextUser ">
+        <i class="fa fa-heart " aria-hidden="true "></i>
       </button>
     </div>
     </div>
@@ -93,7 +103,6 @@ export default {
 //   padding: 2em 0;
 //   height: 1em;
 // }
-
 .btns {
   position: fixed;
   bottom: 50px;

@@ -53,7 +53,7 @@ export default {
         showErrorIfNotReg(newVal) {
             this.$notify.error({
                 title: 'Error',
-                message: 'invalid password or usernamea'
+                message: 'invalid password or username'
             })
         },
         goToMatcherScreen() {
@@ -69,7 +69,7 @@ export default {
     display: flex;
     flex-flow: column wrap;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 h1 {
