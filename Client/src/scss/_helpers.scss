@@ -18,3 +18,41 @@
   font-size: 2em;
   font-weight: bold;
 }
+
+.matchMsg{
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  .el-message-box__header{
+    button{
+    display: none;
+    }
+  }
+  .el-message-box__btns{
+    text-align: center;
+  }
+  .background-img{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  display: inline-block;
+  }
+.match-img{
+  width:50%;
+  max-width: 50%;
+  height: 200px;
+  border-radius: 50%;
+}
+  div{
+    font-size: 1.3em;
+    color:var(--theme-color);
+    font-family: var(--secondary-font);
+  }
+  p{
+    font-size: 0.8em;
+    color:var(--theme-color);
+  }
+  font-weight: bold;
+  background-color: transparent;
+}

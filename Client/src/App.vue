@@ -11,12 +11,15 @@
 
 <script>
 import navbar from './components/General/Navbar'
+import Vue from 'vue'
 
 export default {
   name: 'app',
   created() {
+    Vue.prototype.$createElement = this.$createElement;
     var login = JSON.parse(localStorage.getItem('login'))
     if (login) {
+      login.password = login.token;
       this.$router.push('/loader')
       this.$store.dispatch('login', login)
     }

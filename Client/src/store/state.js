@@ -11,8 +11,8 @@ const profile = {
 }
 
 const likes = [
-    // '4': true, // ug39h4j: true
-    // '5': false // u9gh39h: false
+    // '4': true, 
+    // '5': false
 ]
 
 const filtermap = {
@@ -25,12 +25,6 @@ const matches = [];
 const usersToShow = [];
 
 
-// in order to know when unregistered user tried to login
-var numUnRegLogin = 0;
-
-var isNewMatch = false;
-
-
 const state = {
     _id,
     uName,
@@ -38,9 +32,7 @@ const state = {
     likes,
     matches,
     filtermap,
-    usersToShow,
-    numUnRegLogin,
-    isNewMatch
+    usersToShow
 }
 
 export default state

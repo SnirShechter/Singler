@@ -57,6 +57,11 @@ export default new Router({
       path: '/loader',
       name: 'Loader',
       component: loader
+    },
+    {
+      path: '/myProfile/settings',
+      name: 'Settings',
+      component: settings
     }
   ],
   mode: 'history'

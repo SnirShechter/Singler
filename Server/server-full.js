@@ -23,18 +23,15 @@ var corsOptions = {
 
 const serverRoot = 'http://localhost:3003/';
 const baseUrl = serverRoot + 'data';
-const matchUrl = baseUrl + '/stam/matches';
-// const matchUrl = serverRoot + 'matches';
-
+const matchUrl = baseUrl + '/stam/matches'; // DELETE???
 
 app.use(express.static('uploads'));
-
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(clientSessions({
 	cookieName: 'session',
-	secret: 'C0d1ng 1s fun 1f y0u kn0w h0w', // set this to a long random string!
+	secret: 'C0d1ng 1s fun 1f y0u kn0w h0w',
 	duration: 30 * 60 * 1000,
 	activeDuration: 5 * 60 * 1000,
 }));
@@ -42,12 +39,9 @@ app.use(clientSessions({
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-
 function dbConnect() {
-
 	return new Promise((resolve, reject) => {
 		// Connection URL
-		// var url = 'mongodb://localhost:27017/singlerdb';
 		var url = 'mongodb://singler1:singler1@ds119568.mlab.com:19568/singlerdb';
 		// Use connect method to connect to the Server
 		mongodb.MongoClient.connect(url, function (err, db) {
@@ -84,29 +78,28 @@ app.get('/data/users/all/:id', function (req, res) {
 });
 
 // GETs a single
-app.get('/data/:objType/:id', function (req, res) {
-	const objType = req.params.objType;
-	const objId = req.params.id;
-	cl(`Getting you an ${objType} with id: ${objId}`);
+app.get('/data/users/:id', function (req, res) {
+	const userId = req.params.id;
+	cl(`Getting a user with id: ${userId}`);
 	dbConnect()
 		.then((db) => {
-			const collection = db.collection(objType);
+			const collection = db.collection('users');
 			let _id;
 			try {
-				_id = new mongodb.ObjectID(objId);
+				_id = new mongodb.ObjectID(userId);
 			}
 			catch (e) {
 				return Promise.reject(e);
 			}
 			return collection.findOne({ _id: _id })
-				.then((obj) => {
-					cl("Returning a single item from " + objType);
-					res.json(obj);
+				.then((user) => {
+					cl('Returning a single user');
+					res.json(user);
 					db.close();
 				})
 				.catch(err => {
-					cl('Cannot get you that ', err)
-					res.json(404, { error: 'not found' })
+					cl('Could not return a user', err)
+					res.json(404, { error: 'Not found' })
 					db.close();
 				})
 
@@ -196,14 +189,9 @@ app.put('/data/users', upload.single('file'), function (req, res) {
 
 	const profile = req.body.profile;
 	const _id = mongodb.ObjectID(req.body._id);
-
-	// If there is a file upload, add the url to the obj
-	// if (req.file) {
-	// 	profile.imgUrl = serverRoot + req.file.filename;
-	// }
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
-		collection.updateOne({ _id }, { $set: { profile: profile } }, (err, result) => {
+		collection.updateOne({ _id }, { $set: { profile } }, (err, result) => {
 			if (err) {
 				cl(`Couldnt update/edit a user`, err)
 				res.json(500, { error: 'Failed to update/edit the user' })
@@ -224,14 +212,8 @@ app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
 	cl("POST for " + objType);
 	const obj = req.body;
 	obj.date = Date.now();
-	// If there is a file upload, add the url to the obj
-	// if (req.file) {
-	// 	obj.imgUrl = serverRoot + req.file.filename;
-	// }
-
 	dbConnect().then((db) => {
 		const collection = db.collection(messages);
-
 		collection.insert(obj, (err, result) => {
 			if (err) {
 				cl(`Couldnt insert message ${objType}`, err)
@@ -255,7 +237,6 @@ app.get('/data/chat/messages/:fromId/:toId', function (req, res) {
 	const toId = req.params.toId;
 	dbConnect().then(db => {
 		const collection = db.collection('messages');
-
 		collection.find({ toId: { $in: [fromId, toId] }, fromId: { $in: [toId, fromId] } }).toArray((err, objs) => {
 			if (err) {
 				cl('Cannot get you a list of ', err)
@@ -293,24 +274,20 @@ app.post('/login', function (req, res) {
 	});
 });
 
-// deletes all likes and matches of a single user
-app.get('/delete/likesmatches/:id', function (req, res) {
+// deletes all unlikes of a single user
+// NEED TO CHECK AND FIX
+app.get('/delete/unlikes/:id', function (req, res) {
 	var query = { _id: req.params.id };
-	var update = 'update';
-	cl(`Deleting likes and matches of ${query}`);
-	if (query._id === 'all') {
-		query = {};
-		update += 'Many';
-	}
+	cl(`Deleting unlikes of ${query}`);
 	dbConnect().then((db) => {
-		db.collection('users')[update](query, { $set: { likes: [], matches: [] } }, function (err, user) {
+		db.collection('users').update(query, { likes: { $unset: false } }, function (err, user) {
 			if (err) {
 				cl(`///// ERROR \\\\\ `);
-				cl(`Did not successfuly delete all likes and matches of ${query}`);
-				res.json(`Did not successfuly delete all likes and matches of ${query}`)
+				cl(`Did not successfuly delete all unlikes of ${query._id}`);
+				res.json(`Did not successfuly delete all unlikes of ${query._id}`)
 			} else {
-				cl(`Successfuly Deleted all likes and matches of ${query}`);
-				res.json(`Successfuly Deleted all likes and matches of ${query}`);
+				cl(`Successfuly deleted all unlikes of ${query._id}`);
+				res.json(`Successfuly deleted all unlikes of ${query._id}`);
 			}
 			db.close();
 		});
@@ -319,11 +296,13 @@ app.get('/delete/likesmatches/:id', function (req, res) {
 
 // DELETE???
 app.get('/logout', function (req, res) {
+	cl(`++++++++++++++++++ AM I IN USE? +++++++++++++++++++`)
 	req.session.reset();
 	res.end('Loggedout');
 });
 // DELETE???
 function requireLogin(req, res, next) {
+	cl(`++++++++++++++++++ AM I IN USE? +++++++++++++++++++`)
 	if (!req.session.user) {
 		cl('Login Required');
 		res.json(403, { error: 'Please Login' })
@@ -333,12 +312,12 @@ function requireLogin(req, res, next) {
 };
 // DELETE???
 app.get('/protected', requireLogin, function (req, res) {
+	cl(`++++++++++++++++++ AM I IN USE? +++++++++++++++++++`)
 	res.end('User is loggedin, return some data');
 });
 
 
-
-// DELETE???
+// CHANGE???
 // Kickup our server 
 // Note: app.listen will not work with cors and the socket
 // app.listen(3003, function () {
@@ -361,13 +340,12 @@ io.on('connection', socket => {
 	console.log('SOCKET: user connected');
 	socket.on('identify', userId => {
 		connections.push({ socketId: socket.id, userId })
-		console.log(`identified socket connection as: ${userId}`);
-		console.log(connections)
+		console.log(`SOCKET: identified socket connection as: ${userId}`);
 	})
 	socket.on('disconnect', function () {
 		let idx = connections.findIndex(connection => socket.id === connection.socketId)
-		// console.log(`SOCKET: ${connections[idx].userId} user disconnected`)
 		if (idx !== -1) {
+			console.log(`SOCKET: ${connections[idx].userId} user disconnected`)
 			connections.splice(idx, 1)
 		}
 	});
@@ -409,16 +387,13 @@ function filterUserProfiles(users, id) {
 	var { matches, filtermap: { minAge, maxAge, male: malePref, female: femalePref, imgUrl: imgUrl }, likes } = users[idx];
 	users.splice(idx, 1);
 
-	var filterFunction = like => {
+	// filtering out the likes and matches of the user
+	likes.map(like => {
 		let LikedUserIdx = users.findIndex(user => {
-			return user._id === Object.keys(like)[0]
+			return user._id == Object.keys(like)[0]
 		})
 		users.splice(LikedUserIdx, 1);
-	}
-
-	// filtering out the likes and matches of the user
-	likes.map(filterFunction)
-	matches.map(filterFunction)
+	})
 
 	// adjusting user data so that only a profile with an Id will return
 	var userProfiles = users.map(user => {

@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from 'axios';
 import io from 'socket.io-client'
 import router from '../router'
@@ -17,7 +18,7 @@ export default {
         console.log('Cannot connect to server, are you online?')
       })
   },
-  login(context, { uName, password }) {
+  login(context, { uName, password, token }) {
     axios.post(`${SERVER_URL}/login`, { uName, password })
       .then((res) => {
         res.data.password = password;
@@ -25,8 +26,13 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-        context.commit('setError');
+        Vue.prototype.$message('Wrong username/password, please try again.')
       })
+  },
+  logout() {
+    localStorage.removeItem('login');
+    router.push('/')
+    location.reload();
   },
   connectUser(context, user) {
     context.commit('login', user);
@@ -51,6 +57,7 @@ export default {
       })
   },
   editFilterMatch(context, filterMatch) {
+    // MAKE THIS WORK
     axios.put(`${SERVER_URL}/users/` + context.state._id, filterMatch)
       .then((res) => {
         context.commit('editFilterMatch', filterMatch)
@@ -81,7 +88,19 @@ export default {
   },
   match(context, match) {
     context.commit('match', match);
-    context.commit('notifyMatch');
+    Vue.prototype.$msgbox({
+      customClass: 'matchMsg',
+      title: 'You have a new match',
+      confirmButtonText: 'Ok',
+      message: Vue.prototype.$createElement('div', null,
+        [Vue.prototype.$createElement('div',
+          {
+            class: { 'background-img': true, 'match-img': true },
+            style: { 'background-image': `url(${match.imgUrl})` }
+          }, ``),
+        Vue.prototype.$createElement('br', null, ''),
+        `${match.fName} likes you!`]),
+    })
   },
   unmatch(context, matchId) {
     axios.delete('/matches/' + matchId)

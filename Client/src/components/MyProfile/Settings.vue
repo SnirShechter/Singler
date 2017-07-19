@@ -6,7 +6,7 @@
     <h2>{{$store.state.profile.fName+ ' '+ $store.state.profile.lName}}</h2>
   
     <div class="block">
-      <span class="theme">matching age:</span>
+      <span class="theme">Matching age:</span>
       <el-slider v-model="ageRange" class="ages" range show-stops :min="18" :max="120">
       </el-slider>
     </div>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import router from '../../router'
 export default {
   name: 'match',
   beforeCreate() {
@@ -64,7 +65,6 @@ export default {
       else
         return 1;
     }
-    //msgService.onTyping();
   },
   methods: {
     submit() {
@@ -75,10 +75,11 @@ export default {
         maxAge: ageRange[1]
       }
       this.$store.dispatch('editFilterMatch', { filtermatch: this.filtermatch });
+      router.go(-1);
     },
     cancel() {
-      this.$router.push('/myprofile')
-    },
+      router.go(-1);
+    }
   }
 }
 </script>
