@@ -83,7 +83,8 @@ export default {
   },
   data() {
     return {
-      txt: ''
+      txt: '',
+      audio:new Audio('string.wav')
     }
   },
   methods: {
@@ -93,9 +94,7 @@ export default {
       let msg = { txt, fromId, toId, date };
       this.$store.dispatch('sendMsg', msg);
       this.txt = '';
-      var a = new Audio('../../assets/sounds/load.mp3');
-      a.play();
-      console.log(a)
+      this.audio.play();
     },
     backToMatches() {
       this.$emit('toggleChat');
