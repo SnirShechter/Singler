@@ -34,7 +34,7 @@
       <div>
         <h2 class="theme">Give another chance</h2>
         <p>Reset the unlikes you marked and give those people another shot!</p>
-        <el-button type="primary">Reset</el-button>
+        <el-button type="primary" @click="resetUnlikes">Reset</el-button>
       </div>
     </div>
   
@@ -75,11 +75,13 @@ export default {
   },
   methods: {
     changeProfile(isLiked) {
-      // if (this.$store.state.usersToShow.length === 1) this.$store.dispatch('getUsersToShow', this.$store.state._id);
       this.$store.dispatch('like', { targetId: this.nextUser._id, isLiked })
     },
     showDetails() {
       this.isShowingDetails = !this.isShowingDetails;
+    },
+    resetUnlikes() {
+      this.$store.dispatch('resetUnlikes')
     }
   }
 }
@@ -169,6 +171,10 @@ p {
   width: 100%;
   height: 70vh;
   border-radius: 10px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  display: inline-block;
 }
 
 .img-smaller {

@@ -3,7 +3,8 @@
     <h1>
       <span class="theme">{{$store.state.profile.fName+ ' '+ $store.state.profile.lName}}</span>
     </h1>
-    <img :src="$store.state.profile.imgUrl" class="imgProfile"></img>
+    <!-- <img :src="$store.state.profile.imgUrl" class="imgProfile"></img> -->
+    <div class="img-container background-img" :style="{'background-image': 'url('+this.$store.state.profile.imgUrl+')'}" ></div>
     <div class="details">
       <div v-if="presentMode" class="editMode">
         <span class="theme">First Name</span>
@@ -39,6 +40,7 @@
         <span class="theme">Gender</span>
         {{$store.getters.myGender}}
       </div>
+  
       <div v-else class="editMode">
         <span class="theme">Gender</span>
         <el-radio-group v-model="profile.isMale">
@@ -51,6 +53,7 @@
         <span class="theme">Interests</span>
         {{$store.state.profile.interests}}
       </div>
+  
       <div class="editMode" v-else>
         <span class="theme">Interests</span>
         <el-input v-model="profile.interests"></el-input>
@@ -68,7 +71,7 @@
       </div>
   
       <div class="editMode" v-if="!presentMode">
-        <upload-img @imageUploaded="imageUploaed"></upload-img>
+        <upload-img @imageUploaded="imageUpload"></upload-img>
       </div>
   
       <div v-if="presentMode" class="btns">
@@ -106,7 +109,7 @@ export default {
     }
   },
   methods: {
-    imageUploaed(url) {
+    imageUpload(url) {
       console.log(url);
       this.profile.imgUrl = url;
     },
@@ -114,13 +117,9 @@ export default {
       this.presentMode = !this.presentMode
     },
     commitChange() {
-      // this.presentMode = !this.presentMode,
-      // filterMatch
       console.log(this.profile);
       this.presentMode = !this.presentMode,
         this.$store.dispatch('editProfile', this.profile)
-
-      // this.$store.dispatch('editFilterMatch', { filterMatch });
     },
     cancel() {
       this.presentMode = !this.presentMode
@@ -160,6 +159,15 @@ export default {
 
   .imgProfile {
     max-width: 10px;
+  }
+  .img-container {
+    display: block;
+    width: 100px;
+    height: 70px;
+    border-radius: 10px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
   }
 }
 </style>

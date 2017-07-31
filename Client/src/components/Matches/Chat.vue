@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <div class="chatcmp">
     <div class="page">
       <div class="marvel-device nexus5">
         <div class="top-bar"></div>
@@ -8,21 +8,6 @@
         <div class="camera"></div>
         <div class="screen">
           <div class="screen-container">
-            <div class="status-bar">
-              <div class="time"></div>
-              <div class="battery">
-                <i class="zmdi zmdi-battery"></i>
-              </div>
-              <div class="network">
-                <i class="zmdi zmdi-network"></i>
-              </div>
-              <div class="wifi">
-                <i class="zmdi zmdi-wifi-alt-2"></i>
-              </div>
-              <div class="star">
-                <i class="zmdi zmdi-star"></i>
-              </div>
-            </div>
             <div class="chat">
               <div class="chat-container">
                 <div class="user-bar">
@@ -33,8 +18,7 @@
                     <img :src="match.imgUrl" alt="Avatar">
                   </div>
                   <div class="name">
-                    <span>{{match.fName }}</span>
-                    <!--<span class="status">{{infoBar}}</span>-->
+                    <span>{{ match.fName }}</span>
                   </div>
                   <div class="actions more">
                     <i class="zmdi zmdi-more-vert"></i>
@@ -47,14 +31,11 @@
                   </div>
                 </div>
                 <div class="conversation">
-                  <div class="conversation-container">
-  
+                  <div v-chat-scroll class="conversation-container">
                     <div v-for="msg in match.msgs" class="message" :class="msgClass(msg)" :key="msg">
                       {{msg.txt}}
                       <span class="metadata">
                         <span class="time">{{msg.at}}</span>
-                        <!--<span class="tick" v-if="msg.from === match._id">-->
-                        <!--<svg v-if="!msg.processed" xmlns="http://www.w3.org/2000/svg" width="16" height="15" id="msg-dblcheck" x="2047" y="2061">-->
                         <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" fill="#92a58c" />
                         </svg>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" id="msg-dblcheck-ack" x="2063" y="2076">
@@ -86,7 +67,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 <script>
 import moment from 'moment'
@@ -94,6 +75,12 @@ import moment from 'moment'
 export default {
   name: 'Chat',
   props: ['match'],
+  beforeCreate() {
+    this.$emit('disableNav')
+  },
+  beforeDestroy() {
+    this.$emit('enableNav')
+  },
   data() {
     return {
       txt: ''
@@ -106,6 +93,9 @@ export default {
       let msg = { txt, fromId, toId, date };
       this.$store.dispatch('sendMsg', msg);
       this.txt = '';
+      var a = new Audio('../../assets/sounds/load.mp3');
+      a.play();
+      console.log(a)
     },
     backToMatches() {
       this.$emit('toggleChat');
@@ -120,16 +110,14 @@ export default {
     }
   }
 }
-  // watch: {
-  //   text: function (val) {
-  //     this.newMsg.txt = val;
-  //     //msgService.onTyping();
-  //   }
-  // this.newMsg.txt = this.match.fName + ' is online now';
-
 </script>
 
 <style lang="scss" scoped>
+.chatcmp {
+  width: 100%;
+  height: 100%;
+}
+
 .page {
   width: 100%;
   height: 100%;
@@ -149,6 +137,12 @@ export default {
 .el-icon-arrow-left {
   cursor: pointer;
 }
+
+
+
+
+
+
 
 
 
@@ -179,6 +173,12 @@ export default {
 
 
 
+
+
+
+
+
+
 /* Chat */
 
 .chat {
@@ -188,6 +188,12 @@ export default {
 .chat-container {
   height: 80%;
 }
+
+
+
+
+
+
 
 
 
@@ -241,7 +247,8 @@ export default {
 }
 
 .user-bar .avatar img {
-  border-radius: 50%;
+  border-radius: 50px;
+  max-height: 40px;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
   display: block;
   width: 100%;
@@ -267,10 +274,15 @@ export default {
 
 
 
+
+
+
+
+
+
 /* Conversation */
 
 .conversation {
-  height: calc(100% - 12px);
   position: relative;
   background: (--main-color);
   z-index: 0;
@@ -292,7 +304,6 @@ export default {
 }
 
 .conversation .conversation-container {
-  height: calc(100% - 68px);
   box-shadow: inset 0 10px 10px -10px #000000;
   overflow-x: hidden;
   padding: 0 16px;
@@ -304,6 +315,12 @@ export default {
   display: table;
   clear: both;
 }
+
+
+
+
+
+
 
 
 
@@ -418,6 +435,12 @@ export default {
 
 
 
+
+
+
+
+
+
 /* Compose */
 
 .conversation-compose {
@@ -518,44 +541,45 @@ export default {
 
 
 
+
+
+
+
+
+
 /* Small Screens */
 
-// @media (max-width: 2000px) {
-  .marvel-device.nexus5 {
-    border-radius: 0;
-    flex: none;
-    padding: 0;
-    max-width: none;
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-  }
+.marvel-device.nexus5 {
+  border-radius: 0;
+  flex: none;
+  padding: 0;
+  max-width: none;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
 
-  .marvel-device>.screen .chat {
-    visibility: visible;
-  }
+.marvel-device>.screen .chat {
+  visibility: visible;
+}
 
-  .marvel-device {
-    visibility: hidden;
-  }
+.marvel-device {
+  visibility: hidden;
+}
 
-  .marvel-device .status-bar {
-    display: none;
-  }
+.marvel-device .status-bar {
+  display: none;
+}
 
-  .screen-container {
-    position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
+.screen-container {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 
-  .conversation {
-    height: calc(100vh - 155px);
-  }
-  .conversation .conversation-container {
-    height: calc(100vh - 225px);
-  }
-// }
+.conversation .conversation-container {
+  height: calc(100vh - 120px);
+}
 </style>

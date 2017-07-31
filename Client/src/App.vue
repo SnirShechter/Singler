@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <navbar></navbar>
+    <navbar v-show="isNavShown"></navbar>
     <transition name="fade" mode="out-in">
-      <router-view></router-view>
+      <router-view @disableNav="disableNav" @enableNav="enableNav"></router-view>
     </transition>
-    <footer>Coffeerights belong to
+    <footer v-show="isNavShown">Coffeerights belong to
       <span class="theme">Snit</span>™</footer>
   </div>
 </template>
@@ -20,23 +20,24 @@ export default {
     var login = JSON.parse(localStorage.getItem('login'))
     if (login) {
       login.password = login.token;
-      this.$router.push('/loader')
+      this.$router.replace('/loader')
       this.$store.dispatch('login', login)
+        .then(() => {
+          setTimeout(() => { if (!this.$store.state._id) this.$store.dispatch('login', login) }, 3000)
+        })
     }
   },
   data() {
     return {
-      newMatch: this.$store.state.isNewMatch
+      isNavShown: true
     }
   },
-  watch: {
-    newMatch() {
-      if (newMatch) {
-        this.$message({
-          message: 'Congrats, this is a match',
-          type: 'success'
-        })
-      };
+  methods: {
+    enableNav() {
+      this.isNavShown = true;
+    },
+    disableNav() {
+      this.isNavShown = false;
     }
   },
   components: {

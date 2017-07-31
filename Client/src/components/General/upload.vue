@@ -17,8 +17,8 @@ export default {
     name: 'upload-img',
     data () {
         return {
-            cloud_name: 'dsqetntf1', //'dzvnon9el',
-            upload_preset: 'pqmbguti', // 'ajsjcjub',
+            cloud_name: 'ddugo1bjh', //'dzvnon9el',
+            upload_preset: 'fu8jciwn', // 'ajsjcjub',
             msg: 'Simple Img Uploader Using cloudinary & axios & Vue',
             imageUrl: ''
         }

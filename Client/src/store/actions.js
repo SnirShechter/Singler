@@ -2,8 +2,7 @@ import Vue from 'vue'
 import axios from 'axios';
 import io from 'socket.io-client'
 import router from '../router'
-const SERVER_URL = 'http://localhost:3003'
-
+var SERVER_URL =  process.env.NODE_ENV !== 'development'? '/events-data': 'http://localhost:3003';
 var socket = io(SERVER_URL);
 
 export default {
@@ -26,7 +25,7 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-        Vue.prototype.$message('Wrong username/password, please try again.')
+        Vue.prototype.$message.error('Login unsuccessful')
       })
   },
   logout() {
@@ -57,8 +56,7 @@ export default {
       })
   },
   editFilterMatch(context, filterMatch) {
-    // MAKE THIS WORK
-    axios.put(`${SERVER_URL}/users/` + context.state._id, filterMatch)
+    axios.put(`${SERVER_URL}/data/users/filtermap/` + context.state._id, filterMatch)
       .then((res) => {
         context.commit('editFilterMatch', filterMatch)
       })
@@ -124,6 +122,18 @@ export default {
     axios.get(`${SERVER_URL}/data/chat/messages/${context.state._id}/${match._id}`)
       .then(res => {
         context.commit('addMsgHistory', { msgs: res.data, match })
+      })
+  },
+  resetUnlikes(context) {
+    console.log(`deleting unlikes of ${context.state._id}`)
+    axios.put(`${SERVER_URL}/delete/unlikes/${context.state._id}`) // getting the new user
+      .then((res) => {
+        context.dispatch('getUsersToShow', context.state._id)
+        context.commit('resetUnlikes', res.data);
+      })
+      .catch((error) => {
+        console.log(error)
+        console.log('Cannot connect to server, are you online?')
       })
   }
 };

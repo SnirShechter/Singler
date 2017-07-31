@@ -118,9 +118,13 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 		// add like to current user
 		collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "likes": { [likedUserId]: isLike } } })
 			.then((result) => {
-				cl('Like received,checking for a match')
-				return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
-			}).then((matchResult) => {
+				if (!isLike) cl('Unlike received')
+				else {
+					cl('Like received,checking for a match')
+					return collection.findOne({ _id: new mongodb.ObjectID(likedUserId), "likes": { [userId]: true } });
+				}
+			})
+			.then((matchResult) => {
 				if (matchResult) {
 					cl('Found a match!');
 					collection.updateOne({ _id: new mongodb.ObjectID(userId) }, { $addToSet: { "matches": likedUserId } })
@@ -131,7 +135,14 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 							buildClientMatches([likedUserId, userId])
 								.then((matches) => {
 									// in case matches are mixed
-									if (matches[0]._id !== userId)[matches[0], matches[1]] = [matches[1], matches[0]]
+									console.log(userId, matches[0]._id, matches[1]._id)
+									if (matches[0]._id == userId) {
+										console.log('////////////////// ERROR //////////////////// ')
+										let temp = matches[0]
+										matches[0] = matches[1]
+										matches[1] = temp
+									}
+									console.log(userId, matches[0]._id, matches[1]._id)
 									res.json({ message: 'Updated like and found a match!', isMatch: true, match: matches[0] })
 									let connectionTarget = connections.find(connection => {
 										return likedUserId === connection.userId
@@ -184,20 +195,38 @@ app.post('/data/:objType', upload.single('file'), function (req, res) {
 });
 
 // POST - updates/edits a user
-app.put('/data/users', upload.single('file'), function (req, res) {
+app.put('/data/users', function (req, res) {
 	cl("PUT for users");
-
 	const profile = req.body.profile;
 	const _id = mongodb.ObjectID(req.body._id);
 	dbConnect().then((db) => {
 		const collection = db.collection('users');
 		collection.updateOne({ _id }, { $set: { profile } }, (err, result) => {
 			if (err) {
-				cl(`Couldnt update/edit a user`, err)
-				res.json(500, { error: 'Failed to update/edit the user' })
+				cl(`Couldnt update/edit a user profile`, err)
+				res.json(500, { error: 'Failed to update/edit the user profile' })
 			} else {
-				cl('user updated/edited');
+				cl('user profile updated/edited');
 				res.json(profile);
+			}
+			db.close();
+		});
+	});
+});
+
+app.put('/data/users/filtermap/:id', function (req, res) {
+	cl("PUT for filtermap");
+	const filtermap = req.body;
+	const _id = mongodb.ObjectID(req.params.id);
+	dbConnect().then((db) => {
+		const collection = db.collection('users');
+		collection.updateOne({ _id }, { $set: { filtermap } }, (err, result) => {
+			if (err) {
+				cl(`Couldnt update/edit a user filtermap`, err)
+				res.json(500, { error: 'Failed to update/edit the user filtermap' })
+			} else {
+				cl('user filtermap updated/edited');
+				res.json(filtermap);
 			}
 			db.close();
 		});
@@ -275,22 +304,34 @@ app.post('/login', function (req, res) {
 });
 
 // deletes all unlikes of a single user
-// NEED TO CHECK AND FIX
-app.get('/delete/unlikes/:id', function (req, res) {
-	var query = { _id: req.params.id };
-	cl(`Deleting unlikes of ${query}`);
+app.put('/delete/unlikes/:id', function (req, res) {
+	let _id = req.params.id;
+	cl(`Deleting unlikes of ${_id}`);
 	dbConnect().then((db) => {
-		db.collection('users').update(query, { likes: { $unset: false } }, function (err, user) {
-			if (err) {
+		db.collection('users').findOne({ _id: new mongodb.ObjectID(_id) })
+			.then((user) => {
+				let likes = removeUnlikes(user.likes)
+				dbConnect().then((db) => {
+					db.collection('users').update({ _id: user._id }, { $set: { likes } }, (error, resolve) => {
+						if (error) {
+							cl(`///// ERROR \\\\\ `);
+							cl(error)
+							cl(`Did not successfuly delete all unlikes of ${_id}`);
+							res.json(`Did not successfuly delete all unlikes of ${_id}`)
+						} else {
+							cl(`Successfuly deleted all unlikes of ${_id}`);
+							res.json(likes);
+						}
+					})
+					db.close();
+				})
+			})
+			.catch(err => {
 				cl(`///// ERROR \\\\\ `);
-				cl(`Did not successfuly delete all unlikes of ${query._id}`);
-				res.json(`Did not successfuly delete all unlikes of ${query._id}`)
-			} else {
-				cl(`Successfuly deleted all unlikes of ${query._id}`);
-				res.json(`Successfuly deleted all unlikes of ${query._id}`);
-			}
-			db.close();
-		});
+				cl(`Could not find ${_id}`);
+				res.json(`Could not find ${_id}`)
+			})
+		db.close();
 	});
 });
 
@@ -440,7 +481,6 @@ function buildClientMatches(ServerMatches) {
 
 function getSomeUsers(userIds) {
 	let mongodbUserIds = userIds.map(userId => new mongodb.ObjectID(userId))
-	console.log(mongodbUserIds)
 	return new Promise((resolve, reject) => {
 		dbConnect().then(db => {
 			const collection = db.collection('users');
@@ -456,4 +496,12 @@ function getSomeUsers(userIds) {
 			});
 		})
 	});
+}
+
+
+function removeUnlikes(likes) {
+	return likes.filter(like => {
+		if (like[Object.keys(like)[0]]) return like;
+
+	})
 }

@@ -1,10 +1,10 @@
 <template>
-  <section class="matches">
+  <section class="matches" :class='{fullscreen: isInChat}'>
     <ul v-if="!isInChat">
       <chat-preview v-for="match in this.$store.state.matches" :match="match" :key="match._id" @click.native="selectMatch(match)"></chat-preview>
     </ul>
     <!--<transition name="component-fade" mode="out-in">-->
-    <component v-else :match="selected" @toggleChat="toggleChat" is="chat"></component>
+    <component v-else :match="selected" @enableNav="enableNav" @disableNav="disableNav" @toggleChat="toggleChat" is="chat"></component>
   </section>
 </template>
 
@@ -34,6 +34,12 @@ export default {
     },
     toggleChat() {
       this.isInChat = !this.isInChat;
+    },
+    enableNav() {
+      this.$emit('enableNav')
+    },
+    disableNav() {
+      this.$emit('disableNav')
     }
   },
   computed: {
@@ -45,6 +51,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
 ul {
   display: flex;
   flex-flow: column wrap;

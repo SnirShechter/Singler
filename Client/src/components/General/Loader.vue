@@ -2,7 +2,7 @@
   <section class="loaderPage">
     <div class="loader">Loading...</div>
     <div class="loading">
-      <span class="big-txt theme">Loading 
+      <span class="big-txt theme">Loading
         <span class="dots">&nbsp;{{dots}}</span>
       </span>
     </div>
@@ -12,23 +12,31 @@
 <script>
 export default {
   name: 'Loader',
+  created() {
+    this.timer = setTimeout(() => this.$router.push('/'), 6000)
+  },
+  destroyed() {
+    clearTimeout(this.timer);
+  },
   data() {
     return {
-      dots: '...'
+      dots: '...',
+      timer: null,
+      audio: null
     }
   },
   mounted() {
     setInterval(() => {
       if (this.dots === '...') this.dots = '';
-      else this.dots +='.';
+      else this.dots += '.';
     }, (1.3 / 4) * 1000)
   }
 }
 </script>
 
 <style lang="scss" scoped>
-span .dots{
-  position:absolute;
+span .dots {
+  position: absolute;
 }
 
 .loader {

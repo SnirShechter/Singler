@@ -8,7 +8,9 @@ import 'element-ui/lib/theme-default/index.css'
 import store from './store/index'
 import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
+import VueChatScroll from 'vue-chat-scroll'
 
+Vue.use(VueChatScroll)
 Vue.use(Element)
 
 Vue.config.productionTip = false

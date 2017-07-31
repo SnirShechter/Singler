@@ -40,41 +40,27 @@ export default {
     return {
       female: false,
       male: false,
-      genderPref: null,
+      genderPref: this.getGenderPref(),
       ageRange: [this.$store.state.filtermap.minAge, this.$store.state.filtermap.maxAge],
     }
   },
-  computed: {
-    femalePref() {
-      if (this.genderPref == 1)
-        return false;
-      return true;
-    },
-    malePref() {
-      if (this.genderPref == 2)
-        return false;
-      return true;
-    }
-  },
-  watch: {
-    genderPref: function (val) {
-      if (this.$store.state.filtermap.female === true && this.$store.state.filtermap.male === true)
+  methods: {
+    getGenderPref() {
+      if (this.$store.state.filtermap.female && this.$store.state.filtermap.male)
         return 3;
-      else if (this.$store.state.filtermap.female === 2)
+      else if (this.$store.state.filtermap.female)
         return 2;
       else
         return 1;
-    }
-  },
-  methods: {
+    },
     submit() {
       var filtermatch = {
-        female: this.femalePref,
-        male: this.malePref,
-        minAge: ageRange[0],
-        maxAge: ageRange[1]
+        female: !(this.genderPref == 1),
+        male: !(this.genderPref == 2),
+        minAge: this.ageRange[0],
+        maxAge: this.ageRange[1]
       }
-      this.$store.dispatch('editFilterMatch', { filtermatch: this.filtermatch });
+      this.$store.dispatch('editFilterMatch', filtermatch);
       router.go(-1);
     },
     cancel() {

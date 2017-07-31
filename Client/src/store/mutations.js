@@ -16,7 +16,7 @@ export default {
         state.profile = profile;
     },
     editFilterMatch(state, filterMatch) {
-        state.filterMatch = filterMatch;
+        state.filtermap = filterMatch;
     },
     like(state, { targetId, isLiked }) {
         state.likes.push({ targetId: isLiked });
@@ -43,6 +43,9 @@ export default {
     errorMsg(state, msg) {
         const currMatch = singlerService.findMatchById(state.matches, matchId)
         currMatch.msgs.push(msg);
+    },
+    resetUnlikes(state, likes) {
+        state.likes = likes;
     }
 }
 

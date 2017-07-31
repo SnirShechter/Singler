@@ -36,4 +36,7 @@ a {
   color: var(--theme-color);
   text-decoration: none;
   display: inline-block;
+&:hover, &:active{
+  filter: brightness(0.8)
+}
 }
