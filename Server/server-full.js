@@ -1,29 +1,21 @@
-// Minimal Simple REST API Handler (With MongoDB and Socket.io)
-// Plus support for simple login and session
-// Plus support for file upload
-// Author: Yaron Biton misterBIT.co.il (TalyS updates)
-
 "use strict";
 
+const port = process.env.PORT || 3003;
+const express = require('express');
 var cl = console.log;
-
-const express = require('express'),
-	bodyParser = require('body-parser'),
-	cors = require('cors'),
-	mongodb = require('mongodb')
+var bodyParser = require('body-parser');
+var cors = require('cors');
+var mongodb = require('mongodb');
 
 const clientSessions = require("client-sessions");
-const upload = require('./uploads');
 const app = express();
+app.use('/', express.static(__dirname));
 
 var corsOptions = {
 	origin: /http:\/\/localhost:\d+/,
 	credentials: true
 };
 
-const serverRoot = 'http://localhost:3003/';
-const baseUrl = serverRoot + 'data';
-const matchUrl = baseUrl + '/stam/matches'; // DELETE???
 
 app.use(express.static('uploads'));
 
@@ -166,18 +158,13 @@ app.put('/data/:objType/:id/:trgId/:like', function (req, res) {
 });
 
 // POST - adds a user
-app.post('/data/:objType', upload.single('file'), function (req, res) {
+app.post('/data/:objType', function (req, res) {
 	const objType = req.params.objType;
 	cl("POST for " + objType);
 
 	const user = req.body;
 	user.likes = []
 	user.matches = [];
-
-	// If there is a file upload, add the url to the obj
-	if (req.file) {
-		user.imgUrl = serverRoot + req.file.filename;
-	}
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 
@@ -236,7 +223,7 @@ app.put('/data/users/filtermap/:id', function (req, res) {
 
 
 // Add message
-app.post('/data/chat/:objType', upload.single('file'), function (req, res) {
+app.post('/data/chat/:objType', function (req, res) {
 	const objType = req.params.objType;
 	cl("POST for " + objType);
 	const obj = req.body;
@@ -362,17 +349,10 @@ app.get('/protected', requireLogin, function (req, res) {
 // Kickup our server 
 // Note: app.listen will not work with cors and the socket
 // app.listen(3003, function () {
-http.listen(3003, function () {
-	console.log(`misterREST server is ready at ${baseUrl}`);
-	console.log(`GET (list): \t\t ${baseUrl}/{entity}`);
-	console.log(`GET (single): \t\t ${baseUrl}/{entity}/{id}`);
-	// app.get('/data/matches/:id', function (req, res)
-	console.log(`GET (user matches): \t\t ${matchUrl}/{id}`);
+app.use('/*', express.static(__dirname));
 
-	console.log(`DELETE: \t\t ${baseUrl}/{entity}/{id}`);
-	console.log(`PUT (update): \t\t ${baseUrl}/{entity}/{id}`);
-	console.log(`POST (add): \t\t ${baseUrl}/{entity}`);
-	console.log(`POST (login): \t\t ${serverRoot}{entity}`);
+http.listen(port, function () {
+	console.log(`server is ready at ${port}`);
 
 });
 

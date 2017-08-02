@@ -2,7 +2,8 @@ import Vue from 'vue'
 import axios from 'axios';
 import io from 'socket.io-client'
 import router from '../router'
-var SERVER_URL =  process.env.NODE_ENV !== 'development'? '/events-data': 'http://localhost:3003';
+
+var SERVER_URL =  process.env.NODE_ENV !== 'development'? '': 'http://localhost:3003';
 var socket = io(SERVER_URL);
 
 export default {

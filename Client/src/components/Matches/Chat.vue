@@ -78,13 +78,15 @@ export default {
   beforeCreate() {
     this.$emit('disableNav')
   },
+  created() {
+    new Audio('/static/load.mp3').play();
+  },
   beforeDestroy() {
     this.$emit('enableNav')
   },
   data() {
     return {
-      txt: '',
-      audio:new Audio('string.wav')
+      txt: ''
     }
   },
   methods: {
@@ -94,7 +96,6 @@ export default {
       let msg = { txt, fromId, toId, date };
       this.$store.dispatch('sendMsg', msg);
       this.txt = '';
-      this.audio.play();
     },
     backToMatches() {
       this.$emit('toggleChat');
@@ -145,6 +146,7 @@ export default {
 
 
 
+
 /* Status Bar */
 
 .status-bar {
@@ -178,6 +180,7 @@ export default {
 
 
 
+
 /* Chat */
 
 .chat {
@@ -187,6 +190,7 @@ export default {
 .chat-container {
   height: 80%;
 }
+
 
 
 
@@ -279,6 +283,7 @@ export default {
 
 
 
+
 /* Conversation */
 
 .conversation {
@@ -314,6 +319,7 @@ export default {
   display: table;
   clear: both;
 }
+
 
 
 
@@ -440,6 +446,7 @@ export default {
 
 
 
+
 /* Compose */
 
 .conversation-compose {
@@ -537,6 +544,7 @@ export default {
   font-size: 24px;
   margin-left: 5px;
 }
+
 
 
 
